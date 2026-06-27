@@ -15,8 +15,16 @@ require_once __DIR__ . '/../controllers/StatsController.php';
 $db      = Database::connect();
 $method  = $_SERVER['REQUEST_METHOD'];
 $uri     = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri     = preg_replace('#^/api#', '', $uri);
-$parts   = explode('/', trim($uri, '/'));
+
+// Eliminar el prefijo del subdirectorio para que funcione en cualquier ruta base
+// Ej: /sites/fitrackness/backend/auth/login -> /auth/login
+$scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+if ($scriptDir && str_starts_with($uri, $scriptDir)) {
+    $uri = substr($uri, strlen($scriptDir));
+}
+$uri   = preg_replace('#^/api#', '', $uri) ?: '/';
+$parts = explode('/', trim($uri, '/'));
+if ($parts === ['']) $parts = [];
 
 // Instanciar controladores
 $auth    = new AuthController($db);
