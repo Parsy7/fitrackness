@@ -1,0 +1,6 @@
+.stats-row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-md);
+  justify-content: space-between;
+}

@@ -22,3 +22,5 @@ Thumbs.db
 
 # Uploads (medios subidos por usuarios, no van al repo)
 backend/uploads/
+frontend/dist
+frontend/node_modules

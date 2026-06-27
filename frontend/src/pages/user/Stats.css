@@ -1,0 +1,11 @@
+.stats-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--gap-md);
+  justify-content: space-between;
+}
+
+.chart-wrap {
+  margin: 0 calc(var(--padding-card) * -1);
+}

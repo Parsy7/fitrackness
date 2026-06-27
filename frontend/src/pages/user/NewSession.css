@@ -1,0 +1,13 @@
+.exercise-inputs {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-sm);
+}
+
+.exercise-inputs .form-group {
+  flex: 1;
+}
+
+.hidden-input {
+  display: none;
+}

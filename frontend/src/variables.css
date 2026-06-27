@@ -1,0 +1,87 @@
+/* ============================================
+   FITRACKNESS — Variables CSS globales
+   Fuente de verdad. No hardcodear valores.
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Inter:wght@400;500;700&display=swap');
+
+:root {
+  /* Colores */
+  --color-bg:             #2C3639;
+  --color-bg-card:        #3F4E4F;
+  --color-bg-elevated:    #4A5C5D;
+  --color-primary:        #A27B5C;
+  --color-primary-dark:   #8A6548;
+  --color-primary-light:  #B8956E;
+  --color-border:         #4A5C5D;
+  --color-border-strong:  #5C7070;
+  --color-text:           #DCD7C9;
+  --color-text-muted:     #9BA8A8;
+  --color-text-inverse:   #2C3639;
+  --color-success:        #5A8A6A;
+  --color-warning:        #C4954A;
+  --color-error:          #A25252;
+
+  /* Tipografía */
+  --font-display: "Barlow Condensed", sans-serif;
+  --font-body:    "Inter", sans-serif;
+
+  /* Escala tipográfica */
+  --text-xs:    12px;
+  --text-sm:    14px;
+  --text-base:  16px;
+  --text-md:    18px;
+  --text-lg:    22px;
+  --text-xl:    25px;
+
+  /* Pesos */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-bold:    700;
+
+  /* Interlineado */
+  --leading-tight:  1.2;
+  --leading-normal: 1.5;
+
+  /* Espaciado */
+  --padding-page:          20px;
+  --padding-card:          15px;
+  --padding-btn-x:         10px;
+  --padding-btn-y:          2px;
+  --gap-sm:                10px;
+  --gap-md:                15px;
+  --space-title-subtitle:   5px;
+  --space-subtitle-body:   25px;
+  --space-icon-text:        5px;
+
+  /* Radios */
+  --radius-card:   16px;
+  --radius-sm:     10px;
+  --radius-md:     22px;
+  --radius-pill:  999px;
+
+  /* Bordes */
+  --border-card: 1px solid var(--color-border);
+}
+
+/* ── Reset base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video { max-width: 100%; display: block; }
+button { cursor: pointer; font-family: var(--font-body); }
+input, textarea, select { font-family: var(--font-body); }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
