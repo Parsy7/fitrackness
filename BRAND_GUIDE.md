@@ -2,35 +2,91 @@
 
 ---
 
-## Colores
-*Pendiente de definir*
+## ⚠️ Reglas de uso — Lectura obligatoria
+
+Esta guía es **la única fuente de verdad** para cualquier decisión de diseño en Fitrackness.
+
+### Normas estrictas
+
+1. **Ninguna pantalla, componente o modificación puede saltarse esta guía.** Toda nueva página o componente debe derivar sus valores de las variables aquí definidas, sin excepción.
+2. **Prohibido hardcodear valores.** Ningún color, tamaño de fuente, radio, padding, gap o borde puede escribirse como valor literal en el código. Siempre se usa la variable CSS correspondiente.
+3. **Sin sombras.** Nunca usar `box-shadow` ni `text-shadow` en ningún componente.
+4. **Siempre flex.** El layout se construye con flexbox. No usar grid salvo justificación explícita y aprobada.
+5. **Reutilización obligatoria.** Antes de crear cualquier componente nuevo (botón, pill, card, input…) hay que comprobar si ya existe uno reutilizable. El objetivo es que no haya dos botones con matices diferentes ni variantes no documentadas.
+6. **Un solo lugar por componente.** Cada componente base (`.btn`, `.card`, `.pill`, `.input`…) se define una sola vez en su módulo CSS correspondiente y se importa donde se necesite.
+
+### Proceso para añadir algo nuevo
+
+Si durante el desarrollo se detecta la necesidad de un nuevo valor (un radio diferente, un tamaño de fuente adicional, un color nuevo…):
+
+1. **No añadirlo directamente al código.**
+2. Notificarlo a la propietaria del proyecto con justificación.
+3. Si se aprueba, se añade primero a esta guía como variable y luego se usa en el código.
+
+> Esto garantiza que la guía esté siempre actualizada y que el sistema sea coherente en todo momento.
+
+---
+
+## Tipografía
+
+Dark theme. Paleta basada en verdes muy oscuros con acento cobre/marrón cálido y texto beige.
+
+| Nombre | Hex | Uso |
+|---|---|---|
+| `--color-bg` | `#2C3639` | Fondo base de la app |
+| `--color-bg-card` | `#3F4E4F` | Fondo de cards y superficies elevadas |
+| `--color-bg-elevated` | `#4A5C5D` | Hover de cards, modales, elementos sobre card |
+| `--color-primary` | `#A27B5C` | Acento principal, botones primarios, highlights |
+| `--color-primary-dark` | `#8A6548` | Hover/pressed del primario |
+| `--color-primary-light` | `#B8956E` | Estados activos sutiles, pills de acento |
+| `--color-border` | `#4A5C5D` | Bordes de cards (1px solid, muy sutil) |
+| `--color-border-strong` | `#5C7070` | Bordes de inputs, separadores visibles |
+| `--color-text` | `#DCD7C9` | Texto principal |
+| `--color-text-muted` | `#9BA8A8` | Texto secundario, captions, placeholders |
+| `--color-text-inverse` | `#2C3639` | Texto sobre fondo claro (botones primarios) |
+| `--color-success` | `#5A8A6A` | Éxito, PR nuevo, confirmaciones |
+| `--color-warning` | `#C4954A` | Avisos, adaptaciones |
+| `--color-error` | `#A25252` | Errores, eliminaciones |
 
 ```css
---color-primary:        ;
---color-primary-dark:   ;
---color-secondary:      ;
---color-accent:         ;
---color-bg:             ;
---color-bg-card:        ;
---color-border:         ;
---color-text:           ;
---color-text-muted:     ;
---color-text-inverse:   ;
---color-success:        ;
---color-warning:        ;
---color-error:          ;
+--color-bg:             #2C3639;
+--color-bg-card:        #3F4E4F;
+--color-bg-elevated:    #4A5C5D;
+--color-primary:        #A27B5C;
+--color-primary-dark:   #8A6548;
+--color-primary-light:  #B8956E;
+--color-border:         #4A5C5D;
+--color-border-strong:  #5C7070;
+--color-text:           #DCD7C9;
+--color-text-muted:     #9BA8A8;
+--color-text-inverse:   #2C3639;
+--color-success:        #5A8A6A;
+--color-warning:        #C4954A;
+--color-error:          #A25252;
 ```
+
+---
+
+## Colores
+
+Dark theme. Paleta basada en verdes muy oscuros con acento cobre/marrón cálido y texto beige.
 
 ---
 
 ## Tipografía
 
 ### Fuentes
-*Pendiente de definir*
+- **Display:** `Barlow Condensed` — títulos, impacto visual, sensación atlética
+- **Body:** `Inter` — textos, botones, etiquetas, máxima legibilidad en móvil
+
+Importar desde Google Fonts:
+```html
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+```
 
 ```css
---font-display:  ; /* títulos grandes */
---font-body:     ; /* textos, botones, etiquetas */
+--font-display: "Barlow Condensed", sans-serif; /* títulos grandes */
+--font-body:    "Inter", sans-serif;            /* textos, botones, etiquetas */
 ```
 
 ### Escala de tamaños
@@ -130,23 +186,25 @@
 
 ```css
 :root {
-  /* Colores — pendiente */
-  --color-primary:        ;
-  --color-primary-dark:   ;
-  --color-secondary:      ;
-  --color-accent:         ;
-  --color-bg:             ;
-  --color-bg-card:        ;
-  --color-border:         ;
-  --color-text:           ;
-  --color-text-muted:     ;
-  --color-text-inverse:   ;
-  --color-success:        ;
-  --color-warning:        ;
-  --color-error:          ;
+  /* Colores */
+  --color-bg:             #2C3639;
+  --color-bg-card:        #3F4E4F;
+  --color-bg-elevated:    #4A5C5D;
+  --color-primary:        #A27B5C;
+  --color-primary-dark:   #8A6548;
+  --color-primary-light:  #B8956E;
+  --color-border:         #4A5C5D;
+  --color-border-strong:  #5C7070;
+  --color-text:           #DCD7C9;
+  --color-text-muted:     #9BA8A8;
+  --color-text-inverse:   #2C3639;
+  --color-success:        #5A8A6A;
+  --color-warning:        #C4954A;
+  --color-error:          #A25252;
 
-  /* Tipografía — pendiente */
-  --font-display:  ;
+  /* Tipografía */
+  --font-display: "Barlow Condensed", sans-serif;
+  --font-body:    "Inter", sans-serif;
   --font-body:     ;
 
   /* Escala tipográfica */
