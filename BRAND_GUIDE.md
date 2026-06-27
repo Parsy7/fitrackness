@@ -6,6 +6,14 @@
 
 Esta guía es **la única fuente de verdad** para cualquier decisión de diseño en Fitrackness.
 
+### Mobile first — PRIORITARIO
+La app se usa principalmente desde el móvil. Todo parte de pantalla pequeña:
+- Breakpoint base: **390px**
+- Área táctil mínima en elementos interactivos: **44px**
+- Sin hover como único indicador de estado
+- Media queries siempre de pequeño a grande: `@media (min-width: 768px)`
+- Ningún texto interactivo por debajo de `var(--text-sm)` (14px)
+
 ### Normas estrictas
 
 1. **Ninguna pantalla, componente o modificación puede saltarse esta guía.** Toda nueva página o componente debe derivar sus valores de las variables aquí definidas, sin excepción.

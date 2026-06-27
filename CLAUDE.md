@@ -81,7 +81,15 @@ Antes de crear un componente nuevo comprobar si ya existe en `frontend/src/compo
 ### 4. Sin sombras
 Nunca usar `box-shadow` ni `text-shadow`. Las cards se distinguen por su borde (`var(--border-card)`) y su fondo (`var(--color-bg-card)`).
 
-### 5. Flex siempre
+### 5. Mobile first — PRIORITARIO
+La app se usa principalmente desde el móvil. Todo el diseño y desarrollo parte de pantalla pequeña y escala hacia arriba si fuera necesario:
+- Breakpoint base: 390px (iPhone/Android estándar)
+- Los componentes se diseñan para ser cómodos con el pulgar (mínimo 44px de área táctil en botones e interactivos)
+- Sin hovers como única indicación de estado — los estados deben ser visibles sin ratón
+- Textos legibles sin zoom — mínimo `var(--text-sm)` (14px) para cualquier texto interactivo
+- Las media queries van de pequeño a grande: `@media (min-width: 768px) { … }`
+
+### 6. Flex siempre
 El layout se construye con flexbox usando `var(--gap-sm)` o `var(--gap-md)`. No usar grid salvo que se apruebe explícitamente.
 
 ### 6. Para añadir algo nuevo a la guía
