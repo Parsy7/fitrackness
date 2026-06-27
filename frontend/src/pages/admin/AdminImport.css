@@ -1,0 +1,22 @@
+.import-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--color-border-strong);
+  border-radius: var(--radius-card);
+  padding: var(--padding-page);
+  min-height: 200px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.import-dropzone:active {
+  border-color: var(--color-primary);
+}
+
+.import-preview {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
