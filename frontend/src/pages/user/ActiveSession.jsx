@@ -115,7 +115,16 @@ function ExerciseView({ ex, onBack, onDone, rest }) {
       done:      false,
     }))
   )
-  const [restingAfter, setRestingAfter] = useState(null) // índice de serie tras la que se descansa
+  const [restingAfter, setRestingAfter] = useState(null)
+  const [infoOpen,     setInfoOpen]     = useState(false)
+  const [detail,       setDetail]       = useState(null)
+
+  // Carga el detalle completo del ejercicio (descripción, grupo muscular, media…)
+  useEffect(() => {
+    api.get(`/exercises/${ex.exercise_id}`)
+      .then(data => setDetail(data))
+      .catch(() => {})
+  }, [ex.exercise_id])
 
   const updateSet = (i, field, val) =>
     setSets(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: val } : s))
@@ -199,6 +208,59 @@ function ExerciseView({ ex, onBack, onDone, rest }) {
           </div>
         ))}
       </div>
+
+      {/* Info del ejercicio: descripción, músculo, media */}
+      {detail && (detail.description || detail.muscle_group || detail.equipment || detail.media?.length > 0) && (
+        <div className="ex-info-panel">
+          <button
+            className="ex-info-toggle"
+            onClick={() => setInfoOpen(o => !o)}
+            type="button"
+          >
+            <span className="label">Cómo se hace</span>
+            <span className="ex-info-toggle__arrow">{infoOpen ? '▲' : '▼'}</span>
+          </button>
+          {infoOpen && (
+            <div className="ex-info-body">
+              {(detail.muscle_group || detail.equipment) && (
+                <div className="row" style={{ flexWrap: 'wrap' }}>
+                  {detail.muscle_group && (
+                    <span className="pill pill-muted">{detail.muscle_group}</span>
+                  )}
+                  {detail.equipment && (
+                    <span className="pill pill-muted">{detail.equipment}</span>
+                  )}
+                </div>
+              )}
+              {detail.description && (
+                <p className="body-text">{detail.description}</p>
+              )}
+              {detail.media?.length > 0 && (
+                <div className="ex-media-grid">
+                  {detail.media.map((m, i) =>
+                    m.type === 'photo' ? (
+                      <img
+                        key={i}
+                        src={m.url}
+                        alt={m.caption || ex.canonical_name}
+                        className="ex-media-img"
+                      />
+                    ) : (
+                      <video
+                        key={i}
+                        src={m.url}
+                        controls
+                        playsInline
+                        className="ex-media-img"
+                      />
+                    )
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Contador de descanso */}
       {restingAfter !== null && (

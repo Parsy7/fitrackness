@@ -242,3 +242,56 @@
   flex-direction: column;
   gap: var(--gap-sm);
 }
+
+/* ── Panel de info del ejercicio ─────────────────────────────────── */
+.ex-info-panel {
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-card);
+  overflow: hidden;
+}
+
+.ex-info-toggle {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--padding-card);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  min-height: 44px;
+}
+
+.ex-info-toggle:active {
+  background: var(--color-bg-elevated);
+}
+
+.ex-info-toggle__arrow {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.ex-info-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+  padding: 0 var(--padding-card) var(--padding-card);
+  border-top: var(--border-card);
+}
+
+/* ── Grid de fotos/vídeos de referencia ──────────────────────────── */
+.ex-media-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+.ex-media-img {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  max-height: 260px;
+}
