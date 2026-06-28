@@ -74,15 +74,22 @@ export default function Home() {
                 {/* Header del sub-bloque */}
                 <div
                   className={`subblock-header ${selectedSub === sub ? 'subblock-header--selected' : ''}`}
-                  onClick={() => {
-                    setSelectedSub(sub)
-                    setExpandedSub(expandedSub === sub ? null : sub)
-                  }}
+                  onClick={() => setExpandedSub(expandedSub === sub ? null : sub)}
                 >
                   <div className="row" style={{ gap: 'var(--gap-sm)' }}>
-                    <span className={`subblock-letter ${selectedSub === sub ? 'subblock-letter--selected' : ''}`}>{sub}</span>
+                    <button
+                      className={`subblock-check ${selectedSub === sub ? 'subblock-check--active' : ''}`}
+                      onClick={e => {
+                        e.stopPropagation()
+                        setSelectedSub(selectedSub === sub ? null : sub)
+                      }}
+                      type="button"
+                      aria-label={selectedSub === sub ? 'Deseleccionar' : 'Seleccionar'}
+                    >
+                      {selectedSub === sub ? '✓' : ''}
+                    </button>
+                    <span className="subblock-letter">{sub}</span>
                     <span className="label">{exercises.length} ejercicios</span>
-                    {selectedSub === sub && <span className="pill pill-primary" style={{ fontSize: 'var(--text-xs)', padding: '1px 8px' }}>Seleccionado</span>}
                   </div>
                   {expandedSub === sub
                     ? <ChevronUp size={16} style={{ color: 'var(--color-text-muted)' }} />
@@ -128,7 +135,7 @@ export default function Home() {
             disabled={!selectedSub}
             onClick={() => navigate('/session/new', { state: { preselectedSub: selectedSub } })}
           >
-            <Dumbbell size={18} /> {selectedSub ? `Empezar bloque ${selectedSub}` : 'Elige un sub-bloque'}
+            <Dumbbell size={18} /> Empezar sesión
           </Button>
         </Card>
       ) : (
