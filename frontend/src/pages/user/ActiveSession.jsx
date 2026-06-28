@@ -300,8 +300,8 @@ function ComplementsView({ complements, onDone }) {
       <div className="col col--gap-md">
         {complements.map((c, i) => (
           <Card key={c.id}>
-            <p className="label">{c.name}</p>
-            {c.description && <p className="caption">{c.description}</p>}
+            <p className="label">{c.methodology}{c.parameter ? ` · ${c.parameter}` : ''}</p>
+            {c.notes && <p className="caption">{c.notes}</p>}
             <div className="row" style={{ gap: 'var(--gap-sm)' }}>
               <button
                 className={`btn btn--sm ${states[i].done === true ? 'btn-success' : 'btn-ghost'}`}
@@ -568,8 +568,15 @@ export default function ActiveSession() {
                 {complements.map((c, i) => (
                   <div key={c.id} className="complement-row">
                     <div className="col" style={{ gap: 2, flex: 1 }}>
-                      <span className="label">{c.name}</span>
-                      {c.description && <span className="caption">{c.description}</span>}
+                      <span className="label">
+                        {c.methodology}{c.parameter ? ` · ${c.parameter}` : ''}
+                      </span>
+                      {c.notes && <span className="caption">{c.notes}</span>}
+                      {c.exercises?.length > 0 && (
+                        <span className="caption text-muted">
+                          {c.exercises.map(e => `${e.canonical_name}${e.reps ? ` ${e.reps}` : ''}`).join(' · ')}
+                        </span>
+                      )}
                       {complementStates[i]?.done != null && (
                         <Input
                           placeholder="Observaciones opcionales…"
