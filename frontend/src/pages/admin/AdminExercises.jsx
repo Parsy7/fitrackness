@@ -171,7 +171,17 @@ export default function AdminExercises() {
       )}
 
       {/* Modal crear/editar */}
-      <Modal open={modal} onClose={() => setModal(false)} title={editing ? 'Editar ejercicio' : 'Nuevo ejercicio'}>
+      <Modal
+        open={modal}
+        onClose={() => setModal(false)}
+        title={editing ? 'Editar ejercicio' : 'Nuevo ejercicio'}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setModal(false)}>Cancelar</Button>
+            <Button onClick={save} disabled={saving}>{saving ? 'Guardando...' : 'Guardar'}</Button>
+          </>
+        }
+      >
         {error && <Alert type="error">{error}</Alert>}
 
         <FormGroup label="Nombre canónico *">
@@ -203,10 +213,7 @@ export default function AdminExercises() {
             placeholder={"Menor rango de movimiento\nCon mancuernas en lugar de barra"} rows={3} />
         </FormGroup>
 
-        <div className="row" style={{ justifyContent: 'flex-end', gap: 'var(--gap-sm)' }}>
-          <Button variant="secondary" onClick={() => setModal(false)}>Cancelar</Button>
-          <Button onClick={save} disabled={saving}>{saving ? 'Guardando...' : 'Guardar'}</Button>
-        </div>
+
       </Modal>
 
       <style>{`

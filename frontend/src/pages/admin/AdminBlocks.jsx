@@ -190,7 +190,17 @@ export default function AdminBlocks() {
       )}
 
       {/* Modal crear/editar bloque */}
-      <Modal open={modal} onClose={() => setModal(false)} title={editing ? 'Editar bloque' : 'Nuevo bloque'}>
+      <Modal
+        open={modal}
+        onClose={() => setModal(false)}
+        title={editing ? 'Editar bloque' : 'Nuevo bloque'}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setModal(false)}>Cancelar</Button>
+            <Button onClick={save} disabled={saving}>{saving ? 'Guardando...' : 'Guardar bloque'}</Button>
+          </>
+        }
+      >
         {error && <Alert type="error">{error}</Alert>}
 
         <FormGroup label="Nombre del bloque *">
@@ -251,10 +261,6 @@ export default function AdminBlocks() {
           </div>
         )}
 
-        <div className="row" style={{ justifyContent: 'flex-end', gap: 'var(--gap-sm)' }}>
-          <Button variant="secondary" onClick={() => setModal(false)}>Cancelar</Button>
-          <Button onClick={save} disabled={saving}>{saving ? 'Guardando...' : 'Guardar bloque'}</Button>
-        </div>
       </Modal>
     </div>
   )

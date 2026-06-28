@@ -1,0 +1,28 @@
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  padding: var(--padding-page);
+  border-bottom: var(--border-card);
+  flex-shrink: 0;
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--padding-page);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+}
+
+.modal-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: var(--gap-sm);
+  padding: var(--padding-card) var(--padding-page);
+  border-top: var(--border-card);
+  flex-shrink: 0;
+  background: var(--color-bg-card);
+}

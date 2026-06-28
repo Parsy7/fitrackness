@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { X } from 'lucide-react'
 import { Button } from './Button'
+import './Modal.css'
 
-export function Modal({ open, onClose, title, children }) {
+export function Modal({ open, onClose, title, footer, children }) {
   useEffect(() => {
     if (open) document.body.style.overflow = 'hidden'
     else document.body.style.overflow = ''
@@ -14,13 +15,25 @@ export function Modal({ open, onClose, title, children }) {
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="modal">
-        <div className="row row--between">
+        {/* Header fijo */}
+        <div className="modal-header">
           {title && <h2 className="title-section">{title}</h2>}
-          <Button variant="ghost" size="sm" onClick={onClose} style={{ marginLeft: 'auto' }}>
+          <Button variant="ghost" size="sm" onClick={onClose} style={{ marginLeft: 'auto', flexShrink: 0 }}>
             <X size={20} />
           </Button>
         </div>
-        {children}
+
+        {/* Contenido scrollable */}
+        <div className="modal-body">
+          {children}
+        </div>
+
+        {/* Footer fijo — solo si se pasa */}
+        {footer && (
+          <div className="modal-footer">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   )

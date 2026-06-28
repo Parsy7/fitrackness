@@ -99,7 +99,17 @@ export default function AdminUsers() {
       )}
 
       {/* Modal nuevo usuario */}
-      <Modal open={modal} onClose={() => setModal(false)} title="Nuevo usuario">
+      <Modal
+        open={modal}
+        onClose={() => setModal(false)}
+        title="Nuevo usuario"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setModal(false)}>Cancelar</Button>
+            <Button onClick={create} disabled={saving}>{saving ? 'Creando...' : 'Crear usuario'}</Button>
+          </>
+        }
+      >
         {error && <Alert type="error">{error}</Alert>}
 
         <FormGroup label="Nombre *">
@@ -121,10 +131,7 @@ export default function AdminUsers() {
           </Select>
         </FormGroup>
 
-        <div className="row" style={{ justifyContent: 'flex-end', gap: 'var(--gap-sm)' }}>
-          <Button variant="secondary" onClick={() => setModal(false)}>Cancelar</Button>
-          <Button onClick={create} disabled={saving}>{saving ? 'Creando...' : 'Crear usuario'}</Button>
-        </div>
+
       </Modal>
     </div>
   )

@@ -223,14 +223,12 @@ textarea.input { min-height: 90px; resize: vertical; }
 .modal {
   background: var(--color-bg-card);
   border-radius: var(--radius-card) var(--radius-card) 0 0;
-  padding: var(--padding-page);
   width: 100%;
   max-width: 480px;
   max-height: 90dvh;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: var(--gap-md);
+  overflow: hidden;
 }
 @media (min-width: 768px) {
   .modal-overlay { align-items: center; }
