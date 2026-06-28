@@ -17,14 +17,15 @@ const STATUS = { PENDING: 'pending', ACTIVE: 'active', DONE: 'done' }
 const VIEW   = { LIST: 'list', EXERCISE: 'exercise', SUMMARY: 'summary' }
 
 // ─── Hook: cronómetro general ─────────────────────────────────────────────────
-function useStopwatch() {
+function useStopwatch(active = true) {
   const [seconds, setSeconds] = useState(0)
   const ref = useRef(null)
 
   useEffect(() => {
+    if (!active) return
     ref.current = setInterval(() => setSeconds(s => s + 1), 1000)
     return () => clearInterval(ref.current)
-  }, [])
+  }, [active])
 
   const fmt = (s) => {
     const h = Math.floor(s / 3600)
@@ -409,10 +410,12 @@ function SummaryView({ exercises, totalTime, onClose }) {
 export default function ActiveSession() {
   const { state } = useLocation()
   const navigate  = useNavigate()
-  const stopwatch = useStopwatch()
+
+  const hasSession = !!state?.sessionId
+
+  const stopwatch = useStopwatch(hasSession)
   const rest      = useRestTimer()
 
-  // state viene de NewSession: { sessionId, exercises, complements, subBlock }
   const [sessionId]   = useState(state?.sessionId)
   const [complements] = useState(state?.complements ?? [])
 
@@ -438,8 +441,8 @@ export default function ActiveSession() {
 
   // Redirigir si no hay state (acceso directo a la URL)
   useEffect(() => {
-    if (!state?.sessionId) navigate('/session/new', { replace: true })
-  }, [])
+    if (!hasSession) navigate('/', { replace: true })
+  }, [hasSession])
 
   // Cargar último peso de cada ejercicio en paralelo
   useEffect(() => {
