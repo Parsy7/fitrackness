@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { api } from '../../utils/api'
 import { useAuth } from '../../context/AuthContext'
 import { useFetch } from '../../hooks/useFetch'
 import { Card, StatBox, Pill, LoadingPage, EmptyState, Divider } from '../../components/ui/index'
@@ -15,8 +16,43 @@ export default function Home() {
   const { data: sessions, loading: loadingSessions } = useFetch('/sessions?page=1')
   const { data: block,    loading: loadingBlock }    = useFetch('/blocks/active')
 
-  const [selectedSub, setSelectedSub] = useState(null) // sub-bloque seleccionado para entrenar
-  const [expandedSub, setExpandedSub] = useState(null)  // sub-bloque expandido en acordeón
+  const [selectedSub, setSelectedSub] = useState(null)
+  const [expandedSub, setExpandedSub] = useState(null)
+  const [starting,    setStarting]    = useState(false)
+
+  const startSession = async () => {
+    if (!selectedSub || !block) return
+    setStarting(true)
+    try {
+      const session = await api.post('/sessions', {
+        session_date: new Date().toISOString().split('T')[0],
+        type:         'block',
+        block_id:     block.id,
+        sub_block:    selectedSub,
+      })
+      const exercises = block.exercises
+        .filter(be => be.sub_block === selectedSub)
+        .map(be => ({
+          exercise_id:       be.exercise_id,
+          block_exercise_id: be.id,
+          canonical_name:    be.canonical_name,
+          recommended_sets:  be.recommended_sets,
+          recommended_reps:  be.recommended_reps,
+          recommended_rest:  be.recommended_rest_seconds,
+          sub_block:         be.sub_block,
+        }))
+      navigate('/session/active', {
+        state: {
+          sessionId:   session.id,
+          subBlock:    selectedSub,
+          exercises,
+          complements: block.complements ?? [],
+        }
+      })
+    } catch {
+      setStarting(false)
+    }
+  }
 
   if (loadingStats || loadingSessions || loadingBlock) return <LoadingPage />
 
@@ -132,10 +168,10 @@ export default function Home() {
           <Button
             full
             size="lg"
-            disabled={!selectedSub}
-            onClick={() => navigate('/session/new', { state: { preselectedSub: selectedSub } })}
+            disabled={!selectedSub || starting}
+            onClick={startSession}
           >
-            <Dumbbell size={18} /> Empezar sesión
+            <Dumbbell size={18} /> {starting ? 'Iniciando…' : 'Empezar sesión'}
           </Button>
         </Card>
       ) : (
