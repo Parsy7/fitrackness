@@ -103,6 +103,12 @@
 .ex-icon--done    { color: var(--color-success); }
 .ex-icon--active  { color: var(--color-primary); }
 .ex-icon--pending { color: var(--color-border-strong); }
+.ex-icon--skipped { color: var(--color-text-muted); }
+
+.ex-row--skipped {
+  opacity: 0.45;
+  cursor: default;
+}
 
 /* ── Banner de último peso ───────────────────────────────────────── */
 .last-weight-banner {

@@ -5,16 +5,16 @@ import { Button } from '../../components/ui/Button'
 import { Card, Pill, Alert, Divider } from '../../components/ui/index'
 import { Input } from '../../components/ui/Form'
 import {
-  CheckCircle2, XCircle, Circle, ChevronRight, ArrowLeft,
-  Timer, Pause, Play, RotateCcw, Dumbbell, Trophy, X
+  CheckCircle2, XCircle, MinusCircle, Circle, ChevronRight, ArrowLeft,
+  Timer, Pause, Play, RotateCcw, Dumbbell, X
 } from 'lucide-react'
 import './ActiveSession.css'
 
 import './ActiveSession.css'
 
 // ─── Constantes de estado ────────────────────────────────────────────────────
-const STATUS = { PENDING: 'pending', ACTIVE: 'active', DONE: 'done' }
-const VIEW   = { LIST: 'list', EXERCISE: 'exercise', SUMMARY: 'summary' }
+const STATUS = { PENDING: 'pending', ACTIVE: 'active', DONE: 'done', SKIPPED: 'skipped' }
+const VIEW   = { LIST: 'list', EXERCISE: 'exercise' }
 
 // ─── Hook: cronómetro general ─────────────────────────────────────────────────
 function useStopwatch(active = true) {
@@ -70,14 +70,22 @@ function useRestTimer() {
 
 // ─── Componente: fila de ejercicio en la lista ────────────────────────────────
 function ExerciseRow({ ex, index, onClick }) {
-  const icon = ex.status === STATUS.DONE
+  const isDone    = ex.status === STATUS.DONE
+  const isSkipped = ex.status === STATUS.SKIPPED
+
+  const icon = isDone
     ? <CheckCircle2 size={22} className="ex-icon ex-icon--done" />
-    : ex.status === STATUS.ACTIVE
-      ? <Circle size={22} className="ex-icon ex-icon--active" />
-      : <Circle size={22} className="ex-icon ex-icon--pending" />
+    : isSkipped
+      ? <MinusCircle size={22} className="ex-icon ex-icon--skipped" />
+      : ex.status === STATUS.ACTIVE
+        ? <Circle size={22} className="ex-icon ex-icon--active" />
+        : <Circle size={22} className="ex-icon ex-icon--pending" />
 
   return (
-    <button className={`ex-row ${ex.status === STATUS.DONE ? 'ex-row--done' : ''}`} onClick={onClick}>
+    <button
+      className={`ex-row ${isDone ? 'ex-row--done' : ''} ${isSkipped ? 'ex-row--skipped' : ''}`}
+      onClick={isSkipped ? undefined : onClick}
+    >
       <div className="row" style={{ gap: 'var(--gap-md)' }}>
         {icon}
         <div className="col" style={{ gap: 2, flex: 1, alignItems: 'flex-start' }}>
@@ -89,11 +97,11 @@ function ExerciseRow({ ex, index, onClick }) {
             </span>
           )}
         </div>
-        {ex.status !== STATUS.DONE && (
+        {!isDone && !isSkipped && (
           <ChevronRight size={18} className="text-muted" />
         )}
       </div>
-      {ex.status === STATUS.DONE && ex.sets.length > 0 && (
+      {isDone && ex.sets.length > 0 && (
         <div className="ex-row__summary">
           {ex.sets.map((s, i) => (
             s.weight_kg
@@ -334,68 +342,6 @@ function ComplementsView({ complements, onDone }) {
   )
 }
 
-// ─── Vista: resumen ───────────────────────────────────────────────────────────
-function SummaryView({ exercises, totalTime, onClose }) {
-  const done     = exercises.filter(e => e.status === STATUS.DONE)
-  const skipped  = exercises.filter(e => e.status !== STATUS.DONE)
-  const totalSets = done.reduce((acc, e) => acc + e.sets.filter(s => s.done).length, 0)
-
-  return (
-    <div className="active-view slide-in">
-      <div className="summary-trophy">
-        <Trophy size={48} className="text-primary" />
-      </div>
-      <h1 className="title-page" style={{ textAlign: 'center' }}>¡Entreno completado!</h1>
-      <p className="caption text-muted" style={{ textAlign: 'center' }}>
-        {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
-      </p>
-
-      <div className="summary-stats">
-        <div className="stat-box">
-          <span className="stat-value">{totalTime}</span>
-          <span className="stat-label">Tiempo total</span>
-        </div>
-        <div className="stat-box">
-          <span className="stat-value">{done.length}</span>
-          <span className="stat-label">Ejercicios</span>
-        </div>
-        <div className="stat-box">
-          <span className="stat-value">{totalSets}</span>
-          <span className="stat-label">Series</span>
-        </div>
-      </div>
-
-      <Divider />
-
-      <div className="col col--gap-md">
-        {done.map((ex, i) => (
-          <div key={i} className="summary-ex">
-            <div className="row row--between">
-              <span className="label">{ex.canonical_name}</span>
-              <CheckCircle2 size={16} className="text-success" />
-            </div>
-            <div className="row" style={{ flexWrap: 'wrap' }}>
-              {ex.sets.filter(s => s.done && s.weight_kg).map((s, j) => (
-                <span key={j} className="pill pill-muted">
-                  {s.weight_kg}kg × {s.reps}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
-        {skipped.length > 0 && (
-          <>
-            <Divider />
-            <p className="caption text-muted">Ejercicios omitidos: {skipped.map(e => e.canonical_name).join(', ')}</p>
-          </>
-        )}
-      </div>
-
-      <Button full size="lg" onClick={onClose}>Cerrar</Button>
-    </div>
-  )
-}
-
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function ActiveSession() {
   const { state } = useLocation()
@@ -429,10 +375,7 @@ export default function ActiveSession() {
   const [error,         setError]         = useState('')
   const [confirmExit,   setConfirmExit]   = useState(false)
 
-  // Redirigir si no hay state (acceso directo a la URL)
-  useEffect(() => {
-    if (!hasSession) navigate('/', { replace: true })
-  }, [hasSession])
+
 
   // Cargar último peso de cada ejercicio en paralelo
   useEffect(() => {
@@ -488,6 +431,12 @@ export default function ActiveSession() {
 
   // ── Finalizar sesión ────────────────────────────────────────────────────
   const finishSession = async () => {
+    // Marcar ejercicios no completados como omitidos
+    setExercises(prev => prev.map(e =>
+      e.status === STATUS.PENDING || e.status === STATUS.ACTIVE
+        ? { ...e, status: STATUS.SKIPPED }
+        : e
+    ))
     setSaving(true)
     setError('')
     try {
@@ -500,10 +449,9 @@ export default function ActiveSession() {
           }).catch(() => {})
         }
       }
-      setView(VIEW.SUMMARY)
+      navigate(`/session/${sessionId}`, { replace: true })
     } catch (e) {
       setError(e.message)
-    } finally {
       setSaving(false)
     }
   }
@@ -519,11 +467,12 @@ export default function ActiveSession() {
     setComplementStates(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: val } : s))
 
   // ── Cerrar y navegar al detalle de sesión ───────────────────────────────
-  const closeSession = () => navigate(`/session/${sessionId}`, { replace: true })
-
   const doneCount = exercises.filter(e => e.status === STATUS.DONE).length
 
-  if (!state?.sessionId) return null
+  if (!hasSession) {
+    navigate('/', { replace: true })
+    return null
+  }
 
   return (
     <div className="active-session">
@@ -640,14 +589,7 @@ export default function ActiveSession() {
         />
       )}
 
-      {/* ── VISTA: RESUMEN ───────────────────────────────────────── */}
-      {view === VIEW.SUMMARY && (
-        <SummaryView
-          exercises={exercises}
-          totalTime={stopwatch.display}
-          onClose={closeSession}
-        />
-      )}
+
     </div>
   )
 }
