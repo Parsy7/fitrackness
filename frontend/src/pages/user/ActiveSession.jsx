@@ -145,20 +145,20 @@ function ExerciseView({ ex, onBack, onDone, rest }) {
 
   return (
     <div className="active-view slide-in">
-      {/* Cabecera */}
-      <div className="exercise-header">
-        <button className="btn btn-ghost btn--sm" onClick={onBack}>
-          <ArrowLeft size={18} /> Volver
-        </button>
-        <div className="col" style={{ gap: 2, flex: 1 }}>
-          <h2 className="title-section">{ex.canonical_name}</h2>
-          {ex.recommended_sets && (
-            <p className="caption">
-              Plan: {ex.recommended_sets}×{ex.recommended_reps}
-              {ex.recommended_rest ? ` · ${ex.recommended_rest}s descanso` : ''}
-            </p>
-          )}
-        </div>
+      {/* Botón volver */}
+      <button className="btn btn-ghost btn--sm" style={{ alignSelf: 'flex-start' }} onClick={onBack}>
+        <ArrowLeft size={18} /> Volver
+      </button>
+
+      {/* Título */}
+      <div className="col" style={{ gap: 2 }}>
+        <h2 className="title-section">{ex.canonical_name}</h2>
+        {ex.recommended_sets && (
+          <p className="caption">
+            Plan: {ex.recommended_sets}×{ex.recommended_reps}
+            {ex.recommended_rest ? ` · ${ex.recommended_rest}s descanso` : ''}
+          </p>
+        )}
       </div>
 
       {/* Último peso */}
@@ -185,7 +185,6 @@ function ExerciseView({ ex, onBack, onDone, rest }) {
                   onChange={e => updateSet(i, 'weight_kg', e.target.value)}
                   placeholder="0"
                   step="0.5"
-                  disabled={s.done}
                 />
               </div>
               <div className="set-field">
@@ -194,17 +193,17 @@ function ExerciseView({ ex, onBack, onDone, rest }) {
                   value={s.reps}
                   onChange={e => updateSet(i, 'reps', e.target.value)}
                   placeholder={ex.recommended_reps || '—'}
-                  disabled={s.done}
                 />
               </div>
             </div>
-            {!s.done ? (
-              <button className="btn btn-secondary btn--sm set-done-btn" onClick={() => markSetDone(i)}>
-                ✓ Hecha
-              </button>
-            ) : (
-              <CheckCircle2 size={22} className="set-check" />
-            )}
+            <button
+              className={`set-done-icon ${s.done ? 'set-done-icon--done' : ''}`}
+              onClick={() => s.done ? updateSet(i, 'done', false) : markSetDone(i)}
+              type="button"
+              aria-label={s.done ? 'Desmarcar serie' : 'Marcar serie hecha'}
+            >
+              <CheckCircle2 size={26} />
+            </button>
           </div>
         ))}
       </div>

@@ -123,14 +123,6 @@
   flex-shrink: 0;
 }
 
-/* ── Cabecera del ejercicio activo ───────────────────────────────── */
-.exercise-header {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: var(--gap-md);
-}
-
 /* ── Lista de series ─────────────────────────────────────────────── */
 .sets-list {
   display: flex;
@@ -180,17 +172,23 @@
   gap: 4px;
 }
 
-.set-done-btn {
+.set-done-icon {
   flex-shrink: 0;
   align-self: flex-end;
-  min-width: 72px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-border-strong);
+  padding: 8px 0 8px 4px;
+  transition: color 0.15s;
 }
 
-.set-check {
+.set-done-icon--done {
   color: var(--color-success);
-  flex-shrink: 0;
-  align-self: flex-end;
-  margin-bottom: 10px;
+}
+
+.set-done-icon:active {
+  opacity: 0.7;
 }
 
 /* ── Panel de descanso ───────────────────────────────────────────── */
