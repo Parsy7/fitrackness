@@ -1,0 +1,18 @@
+.workout-done-banner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--gap-md);
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-bg-card));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  border-radius: var(--radius-card);
+  padding: var(--padding-card);
+}
+
+.workout-done-banner__title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  line-height: var(--leading-tight);
+}

@@ -1,12 +1,14 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useFetch } from '../../hooks/useFetch'
 import { Card, Pill, LoadingPage, Divider, EmptyState } from '../../components/ui/index'
 import { Button } from '../../components/ui/Button'
-import { ChevronLeft, Calendar, Dumbbell, Weight } from 'lucide-react'
+import { ChevronLeft, Calendar, Dumbbell, Weight, Trophy } from 'lucide-react'
+import './SessionDetail.css'
 
 export default function SessionDetail() {
   const { id }   = useParams()
   const navigate = useNavigate()
+  const { state: navState } = useLocation()
   const { data: session, loading } = useFetch(`/sessions/${id}`)
 
   if (loading) return <LoadingPage />
@@ -24,6 +26,19 @@ export default function SessionDetail() {
       <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
         <ChevronLeft size={18} /> Volver
       </Button>
+
+      {/* Banner de entreno completado */}
+      {navState?.fromWorkout && (
+        <div className="workout-done-banner">
+          <Trophy size={28} className="text-primary" />
+          <div className="col" style={{ gap: 2 }}>
+            <span className="workout-done-banner__title">¡Entreno completado!</span>
+            <span className="caption text-muted">
+              {navState.doneCount}/{navState.totalEx} ejercicios · {navState.totalSets} series · {navState.totalTime}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Cabecera */}
       <div className="col" style={{ gap: 'var(--space-title-subtitle)' }}>

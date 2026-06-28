@@ -449,7 +449,16 @@ export default function ActiveSession() {
           }).catch(() => {})
         }
       }
-      navigate(`/session/${sessionId}`, { replace: true })
+      navigate(`/session/${sessionId}`, {
+        replace: true,
+        state: {
+          fromWorkout: true,
+          totalTime:   stopwatch.display,
+          doneCount:   exercises.filter(e => e.status === STATUS.DONE).length,
+          totalEx:     exercises.length,
+          totalSets:   exercises.reduce((acc, e) => acc + (e.sets?.filter(s => s.done).length ?? 0), 0),
+        }
+      })
     } catch (e) {
       setError(e.message)
       setSaving(false)
