@@ -293,3 +293,71 @@
   object-fit: cover;
   max-height: 260px;
 }
+
+/* ── Sección de complementos integrada en la lista ───────────────── */
+.complements-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  border-top: 2px dashed var(--color-border-strong);
+  padding-top: var(--gap-md);
+  margin-top: var(--gap-sm);
+}
+
+.complements-section__title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-muted);
+  letter-spacing: 0.03em;
+}
+
+.complement-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--gap-sm);
+  background: var(--color-bg-card);
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  padding: var(--padding-card);
+}
+
+.complement-row__actions {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-sm);
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.complement-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-border-strong);
+  padding: 4px;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s;
+}
+
+.complement-btn--yes { color: var(--color-success); }
+.complement-btn--no  { color: var(--color-error); }
+.complement-btn:active { opacity: 0.7; }
+
+/* ── Confirmación de salida ──────────────────────────────────────── */
+.exit-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-sm);
+  padding: var(--padding-card);
+  background: color-mix(in srgb, var(--color-error) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-error) 30%, transparent);
+  border-radius: var(--radius-card);
+}

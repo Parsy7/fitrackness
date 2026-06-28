@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/Button'
 import { Card, Pill, Alert, Divider } from '../../components/ui/index'
 import { Input } from '../../components/ui/Form'
 import {
-  CheckCircle2, Circle, ChevronRight, ArrowLeft,
+  CheckCircle2, XCircle, Circle, ChevronRight, ArrowLeft,
   Timer, Pause, Play, RotateCcw, Dumbbell, Trophy
 } from 'lucide-react'
 import './ActiveSession.css'
@@ -14,7 +14,7 @@ import './ActiveSession.css'
 
 // ─── Constantes de estado ────────────────────────────────────────────────────
 const STATUS = { PENDING: 'pending', ACTIVE: 'active', DONE: 'done' }
-const VIEW   = { LIST: 'list', EXERCISE: 'exercise', COMPLEMENTS: 'complements', SUMMARY: 'summary' }
+const VIEW   = { LIST: 'list', EXERCISE: 'exercise', SUMMARY: 'summary' }
 
 // ─── Hook: cronómetro general ─────────────────────────────────────────────────
 function useStopwatch() {
@@ -426,10 +426,15 @@ export default function ActiveSession() {
     }))
   )
 
-  const [view,        setView]        = useState(VIEW.LIST)
-  const [activeIdx,   setActiveIdx]   = useState(null)
-  const [saving,      setSaving]      = useState(false)
-  const [error,       setError]       = useState('')
+  const [complementStates, setComplementStates] = useState(() =>
+    (state?.complements ?? []).map(c => ({ id: c.id, done: null, observations: '' }))
+  )
+
+  const [view,          setView]          = useState(VIEW.LIST)
+  const [activeIdx,     setActiveIdx]     = useState(null)
+  const [saving,        setSaving]        = useState(false)
+  const [error,         setError]         = useState('')
+  const [confirmExit,   setConfirmExit]   = useState(false)
 
   // Redirigir si no hay state (acceso directo a la URL)
   useEffect(() => {
@@ -489,11 +494,10 @@ export default function ActiveSession() {
   }
 
   // ── Finalizar sesión ────────────────────────────────────────────────────
-  const finishSession = async (complementStates) => {
+  const finishSession = async () => {
     setSaving(true)
     setError('')
     try {
-      // Registrar complementos
       for (const cs of complementStates) {
         if (cs.done !== null) {
           await api.post(`/sessions/${sessionId}/complements`, {
@@ -511,11 +515,19 @@ export default function ActiveSession() {
     }
   }
 
+  // ── Salir sin guardar ───────────────────────────────────────────────────
+  const exitWithoutSaving = () => {
+    api.delete(`/sessions/${sessionId}`).catch(() => {})
+    navigate('/', { replace: true })
+  }
+
+  // ── Actualizar estado de un complemento ────────────────────────────────
+  const setComp = (i, field, val) =>
+    setComplementStates(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: val } : s))
+
   // ── Cerrar y navegar al detalle de sesión ───────────────────────────────
   const closeSession = () => navigate(`/session/${sessionId}`)
 
-  // ── Comprobar si todos están hechos para ofrecer ir a complementos ─────
-  const allExDone = exercises.length > 0 && exercises.every(e => e.status === STATUS.DONE)
   const doneCount = exercises.filter(e => e.status === STATUS.DONE).length
 
   if (!state?.sessionId) return null
@@ -543,6 +555,7 @@ export default function ActiveSession() {
 
           {error && <Alert type="error">{error}</Alert>}
 
+          {/* Ejercicios */}
           <div className="col col--gap-md">
             {exercises.map((ex, i) => (
               <ExerciseRow
@@ -554,26 +567,65 @@ export default function ActiveSession() {
             ))}
           </div>
 
-          {allExDone && complements.length > 0 && (
-            <Button full size="lg" onClick={() => setView(VIEW.COMPLEMENTS)}>
-              Continuar con complementos →
-            </Button>
+          {/* Complementos integrados */}
+          {complements.length > 0 && (
+            <div className="complements-section">
+              <p className="complements-section__title">Complementos</p>
+              <div className="col" style={{ gap: 'var(--gap-sm)' }}>
+                {complements.map((c, i) => (
+                  <div key={c.id} className="complement-row">
+                    <div className="col" style={{ gap: 2, flex: 1 }}>
+                      <span className="label">{c.name}</span>
+                      {c.description && <span className="caption">{c.description}</span>}
+                      {complementStates[i]?.done != null && (
+                        <Input
+                          placeholder="Observaciones opcionales…"
+                          value={complementStates[i].observations}
+                          onChange={e => setComp(i, 'observations', e.target.value)}
+                          style={{ marginTop: 'var(--gap-sm)' }}
+                        />
+                      )}
+                    </div>
+                    <div className="complement-row__actions">
+                      <button
+                        className={`complement-btn ${complementStates[i]?.done === true ? 'complement-btn--yes' : ''}`}
+                        onClick={() => setComp(i, 'done', complementStates[i]?.done === true ? null : true)}
+                        type="button"
+                      >
+                        <CheckCircle2 size={20} />
+                      </button>
+                      <button
+                        className={`complement-btn ${complementStates[i]?.done === false ? 'complement-btn--no' : ''}`}
+                        onClick={() => setComp(i, 'done', complementStates[i]?.done === false ? null : false)}
+                        type="button"
+                      >
+                        <XCircle size={20} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
-          {allExDone && complements.length === 0 && (
-            <Button full size="lg" onClick={() => finishSession([]).then(() => setView(VIEW.SUMMARY))}>
-              {saving ? 'Guardando…' : 'Finalizar entrenamiento'}
-            </Button>
-          )}
+          {/* Botón finalizar — siempre visible */}
+          <Button full size="lg" disabled={saving} onClick={finishSession}>
+            {saving ? 'Guardando…' : 'Finalizar entrenamiento'}
+          </Button>
 
-          {!allExDone && doneCount > 0 && (
-            <button
-              className="btn btn-ghost btn--sm"
-              style={{ alignSelf: 'center' }}
-              onClick={() => setView(VIEW.COMPLEMENTS)}
-            >
-              Saltar al final sin terminar todos
+          {/* Salir sin guardar */}
+          {!confirmExit ? (
+            <button className="btn btn-ghost btn--sm" style={{ alignSelf: 'center' }} onClick={() => setConfirmExit(true)}>
+              Salir sin guardar
             </button>
+          ) : (
+            <div className="exit-confirm">
+              <p className="caption text-muted">¿Segura? Se borrará la sesión y no se guardará nada.</p>
+              <div className="row" style={{ justifyContent: 'center', gap: 'var(--gap-md)' }}>
+                <button className="btn btn-danger btn--sm" onClick={exitWithoutSaving}>Sí, salir</button>
+                <button className="btn btn-ghost btn--sm" onClick={() => setConfirmExit(false)}>Cancelar</button>
+              </div>
+            </div>
           )}
         </div>
       )}
@@ -585,14 +637,6 @@ export default function ActiveSession() {
           onBack={() => { rest.reset(); setView(VIEW.LIST) }}
           onDone={finishExercise}
           rest={rest}
-        />
-      )}
-
-      {/* ── VISTA: COMPLEMENTOS ──────────────────────────────────── */}
-      {view === VIEW.COMPLEMENTS && (
-        <ComplementsView
-          complements={complements}
-          onDone={finishSession}
         />
       )}
 
