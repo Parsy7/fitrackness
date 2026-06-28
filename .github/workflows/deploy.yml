@@ -48,4 +48,4 @@ jobs:
           REMOTE_PORT: ${{ secrets.SSH_PORT }}
           SOURCE: "backend/"
           TARGET: "/var/www/vhosts/letsshuffle.es/fitrackness.letsshuffle.es/backend/"
-          EXCLUDE: ".env, database/, uploads/, *.db"
+          EXCLUDE: ".env, uploads/, *.db, *.db-wal, *.db-shm"
