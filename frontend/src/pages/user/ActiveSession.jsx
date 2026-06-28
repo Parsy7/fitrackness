@@ -255,18 +255,18 @@ function ExerciseView({ ex, onBack, onDone, rest }) {
       {/* Contador de descanso */}
       {restingAfter !== null && (
         <div className="rest-panel">
-          <div className="rest-panel__top">
-            <Timer size={16} className="text-primary" />
-            <span className="label text-primary">Descanso</span>
-            <span className="rest-display">{rest.display}</span>
+          <div className="rest-panel__label">
+            <Timer size={20} className="text-primary" />
+            <span className="rest-panel__title">Descanso</span>
           </div>
-          <div className="row" style={{ justifyContent: 'center', gap: 'var(--gap-md)' }}>
+          <span className="rest-display">{rest.display}</span>
+          <div className="rest-panel__actions">
             {rest.active
-              ? <button className="btn btn-ghost btn--sm" onClick={rest.pause}><Pause size={16} /> Pausar</button>
-              : <button className="btn btn-ghost btn--sm" onClick={rest.resume}><Play size={16} /> Reanudar</button>
+              ? <button className="btn btn-ghost" onClick={rest.pause}><Pause size={20} /> Pausar</button>
+              : <button className="btn btn-ghost" onClick={rest.resume}><Play size={20} /> Reanudar</button>
             }
-            <button className="btn btn-ghost btn--sm" onClick={() => { rest.reset(); setRestingAfter(null) }}>
-              <RotateCcw size={16} /> Resetear
+            <button className="btn btn-ghost" onClick={() => { rest.reset(); setRestingAfter(null) }}>
+              <RotateCcw size={20} /> Resetear
             </button>
           </div>
         </div>

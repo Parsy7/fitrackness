@@ -193,29 +193,47 @@
 
 /* ── Panel de descanso ───────────────────────────────────────────── */
 .rest-panel {
-  background: var(--color-bg-card);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-bg-card));
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-card);
-  padding: var(--padding-card);
+  padding: var(--padding-page);
   display: flex;
   flex-direction: column;
-  gap: var(--gap-sm);
-}
-
-.rest-panel__top {
-  display: flex;
-  flex-direction: row;
   align-items: center;
   gap: var(--gap-sm);
 }
 
+.rest-panel__label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-icon-text);
+}
+
+.rest-panel__title {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .rest-display {
   font-family: var(--font-display);
-  font-size: var(--text-xl);
+  font-size: 56px;
   font-weight: var(--weight-bold);
   color: var(--color-primary);
-  margin-left: auto;
   letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.rest-panel__actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: var(--gap-md);
+  margin-top: var(--gap-sm);
 }
 
 /* ── Resumen final ───────────────────────────────────────────────── */
