@@ -5,7 +5,9 @@ import { Card, Pill, EmptyState, LoadingPage, Alert, Divider } from '../../compo
 import { Button } from '../../components/ui/Button'
 import { Modal } from '../../components/ui/Modal'
 import { FormGroup, Input, Textarea, Select } from '../../components/ui/Form'
-import { Plus, Pencil, Trash2, Layers, ChevronDown, ChevronUp } from 'lucide-react'
+import { Plus, Pencil, Trash2, Layers, ChevronDown, ChevronUp, Star } from 'lucide-react'
+import { ComplementForm } from '../../components/ui/ComplementForm'
+import { ComplementCard } from '../../components/ui/ComplementCard'
 import { ExerciseSelect } from '../../components/ui/ExerciseSelect'
 
 const SUB_BLOCKS = ['A', 'B', 'C', 'D', 'E', 'General']
@@ -23,6 +25,8 @@ export default function AdminBlocks() {
   const [expanded, setExpanded] = useState({})
   const [saving, setSaving]   = useState(false)
   const [error, setError]     = useState('')
+  const [compModal, setCompModal] = useState(null) // block para gestionar complementos
+  const [savingComp, setSavingComp] = useState(false)
 
   const handle = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
@@ -101,6 +105,22 @@ export default function AdminBlocks() {
     }
   }
 
+  const createComplement = async (blockId, form) => {
+    setSavingComp(true)
+    try {
+      await api.post(`/blocks/${blockId}/complements`, form)
+      refetch()
+      setCompModal(null)
+    } catch (err) { alert(err.message) }
+    finally { setSavingComp(false) }
+  }
+
+  const deleteComplement = async id => {
+    if (!confirm('¿Eliminar este complemento?')) return
+    try { await api.delete(`/complements/${id}`); refetch() }
+    catch (err) { alert(err.message) }
+  }
+
   const deleteBlock = async id => {
     if (!confirm('¿Eliminar este bloque?')) return
     try { await api.delete(`/blocks/${id}`); refetch() }
@@ -144,6 +164,7 @@ export default function AdminBlocks() {
                 </div>
                 <div className="row">
                   <Pill variant="muted">{b.exercises?.length || 0} ej.</Pill>
+                  <Button variant="ghost" size="sm" onClick={() => setCompModal(b)} title="Complementos"><Star size={16} style={{ color: 'var(--color-warning)' }} /></Button>
                   <Button variant="ghost" size="sm" onClick={() => openEdit(b)} disabled={loadingEx}><Pencil size={16} /></Button>
                   <Button variant="ghost" size="sm" onClick={() => deleteBlock(b.id)}><Trash2 size={16} style={{ color: 'var(--color-error)' }} /></Button>
                 </div>
@@ -162,6 +183,19 @@ export default function AdminBlocks() {
                     {expanded[b.id] ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                     Ver ejercicios
                   </button>
+                  {/* Complementos del bloque */}
+                  {expanded[b.id] && (b.complements || []).length > 0 && (
+                    <div className="col" style={{ gap: 'var(--gap-sm)', padding: '0 0 var(--gap-sm)' }}>
+                      <p className="caption text-muted">Complementos</p>
+                      {(b.complements || []).map(comp => (
+                        <div key={comp.id} className="row row--between" style={{ alignItems: 'flex-start' }}>
+                          <div style={{ flex: 1 }}><ComplementCard complement={comp} readOnly /></div>
+                          <Button variant="ghost" size="sm" onClick={() => deleteComplement(comp.id)}><Trash2 size={14} style={{ color: 'var(--color-error)' }} /></Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   {expanded[b.id] && (
                     <div className="col" style={{ gap: 'var(--gap-sm)' }}>
                       {['A','B','C','D'].map(sub => {
@@ -262,6 +296,25 @@ export default function AdminBlocks() {
         )}
 
       </Modal>
+      {/* Modal complementos */}
+      {compModal && (
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setCompModal(null)}>
+          <div className="modal">
+            <div className="modal-header">
+              <h2 className="title-section">Complementos — {compModal.name}</h2>
+              <Button variant="ghost" size="sm" onClick={() => setCompModal(null)} style={{ marginLeft: 'auto' }}>✕</Button>
+            </div>
+            <div className="modal-body">
+              <ComplementForm
+                exercises={exercises}
+                saving={savingComp}
+                onSave={form => createComplement(compModal.id, form)}
+                onCancel={() => setCompModal(null)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

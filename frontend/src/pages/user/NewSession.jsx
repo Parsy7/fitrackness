@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useFetch } from '../../hooks/useFetch'
 import { api } from '../../utils/api'
@@ -6,6 +6,7 @@ import { Card, Alert, Pill, Divider, LoadingPage, EmptyState } from '../../compo
 import { Button } from '../../components/ui/Button'
 import { FormGroup, Input, Textarea, Select } from '../../components/ui/Form'
 import { Camera, ChevronDown, ChevronUp, Dumbbell } from 'lucide-react'
+import { ComplementCard } from '../../components/ui/ComplementCard'
 import './NewSession.css'
 
 export default function NewSession() {
@@ -20,6 +21,7 @@ export default function NewSession() {
   const [saving, setSaving]     = useState(false)
   const [error, setError]       = useState('')
   const [expanded, setExpanded] = useState({})
+  const sessionIdRef = useRef(null)
 
   // Obtener los sub-bloques disponibles en el bloque activo
   const availableSubBlocks = block
@@ -89,12 +91,22 @@ export default function NewSession() {
         }
       }
 
+      sessionIdRef.current = session.id
       navigate(`/session/${session.id}`)
     } catch (err) {
       setError(err.message)
     } finally {
       setSaving(false)
     }
+  }
+
+  const registerComplement = async (complementId, done, observations) => {
+    if (!sessionIdRef.current) return
+    await api.post(`/sessions/${sessionIdRef.current}/complements`, {
+      complement_id: complementId,
+      done,
+      observations: observations || undefined,
+    }).catch(() => {})
   }
 
   if (loading) return <LoadingPage />

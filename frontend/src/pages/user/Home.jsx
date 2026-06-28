@@ -5,6 +5,7 @@ import { Card, StatBox, Pill, LoadingPage, EmptyState, Divider } from '../../com
 import { Button } from '../../components/ui/Button'
 import { useNavigate } from 'react-router-dom'
 import { Dumbbell, TrendingUp, Calendar, ChevronDown, ChevronUp } from 'lucide-react'
+import { ComplementCard } from '../../components/ui/ComplementCard'
 import './Home.css'
 
 export default function Home() {
@@ -108,6 +109,12 @@ export default function Home() {
                           )}
                           {ex.notes && <span className="caption text-muted">{ex.notes}</span>}
                         </div>
+                      </div>
+                    ))}
+                    {/* Complementos del sub-bloque */}
+                    {(block.complements || []).filter(c => c.sub_block === sub).map(comp => (
+                      <div key={comp.id} style={{ padding: 'var(--gap-sm) var(--padding-card)' }}>
+                        <ComplementCard complement={comp} readOnly />
                       </div>
                     ))}
                   </div>

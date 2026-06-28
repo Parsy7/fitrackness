@@ -132,3 +132,34 @@ CREATE INDEX IF NOT EXISTS idx_session_exercises_session ON session_exercises(se
 CREATE INDEX IF NOT EXISTS idx_block_exercises_block ON block_exercises(block_id);
 CREATE INDEX IF NOT EXISTS idx_exercise_aliases_exercise ON exercise_aliases(exercise_id);
 CREATE INDEX IF NOT EXISTS idx_blocks_start_date ON blocks(start_date);
+
+-- Complementos de un sub-bloque (EMOM, AMRAP, Circuito, etc.)
+CREATE TABLE IF NOT EXISTS block_complements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    block_id INTEGER NOT NULL REFERENCES blocks(id) ON DELETE CASCADE,
+    sub_block TEXT NOT NULL,          -- A, B, C, D
+    methodology TEXT NOT NULL,         -- EMOM, AMRAP, Circuito, 21-15-9, Rounds for Time...
+    parameter TEXT,                    -- "12 minutos", "3 rondas", "21-15-9"
+    notes TEXT,                        -- descripción libre adicional
+    order_index INTEGER DEFAULT 0
+);
+
+-- Ejercicios dentro de un complemento
+CREATE TABLE IF NOT EXISTS block_complement_exercises (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    complement_id INTEGER NOT NULL REFERENCES block_complements(id) ON DELETE CASCADE,
+    exercise_id INTEGER NOT NULL REFERENCES exercises(id),
+    reps TEXT,                         -- "10", "15/10", "40M", "30 seg"
+    notes TEXT,
+    order_index INTEGER DEFAULT 0
+);
+
+-- Registro de complementos completados en una sesión
+CREATE TABLE IF NOT EXISTS session_complements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id INTEGER NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+    complement_id INTEGER NOT NULL REFERENCES block_complements(id),
+    done INTEGER NOT NULL DEFAULT 0,   -- 0 = no hecho, 1 = hecho
+    observations TEXT,                 -- "No pude acabar el AMRAP, llegué a 3 rondas"
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

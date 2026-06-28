@@ -1,0 +1,57 @@
+.complement-card {
+  border: var(--border-card);
+  border-left: 3px solid var(--color-warning);
+  border-radius: var(--radius-sm);
+  padding: var(--padding-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  background: var(--color-bg-card);
+  transition: border-color 0.2s, opacity 0.2s;
+}
+
+.complement-card--done {
+  border-left-color: var(--color-success);
+  opacity: 0.75;
+}
+
+.complement-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--gap-sm);
+}
+
+.complement-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.complement-exercises {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--gap-sm) 0 0;
+  border-top: var(--border-card);
+}
+
+.complement-ex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--gap-sm);
+}
+
+.complement-ex-row .caption {
+  min-width: 36px;
+  text-align: right;
+}
+
+.complement-obs {
+  padding-top: var(--gap-sm);
+}

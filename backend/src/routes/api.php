@@ -11,6 +11,7 @@ require_once __DIR__ . '/../controllers/ExerciseController.php';
 require_once __DIR__ . '/../controllers/BlockController.php';
 require_once __DIR__ . '/../controllers/SessionController.php';
 require_once __DIR__ . '/../controllers/StatsController.php';
+require_once __DIR__ . '/../controllers/ComplementController.php';
 
 $db      = Database::connect();
 $method  = $_SERVER['REQUEST_METHOD'];
@@ -38,6 +39,7 @@ $exercises = new ExerciseController($db);
 $blocks  = new BlockController($db);
 $sessions = new SessionController($db);
 $stats   = new StatsController($db);
+$complements = new ComplementController($db);
 
 // ──────────────────────────────────────────────
 // RUTAS
@@ -102,6 +104,7 @@ elseif ($parts[0] === 'exercises') {
 elseif ($parts[0] === 'blocks') {
     $id  = isset($parts[1]) && is_numeric($parts[1]) ? (int)$parts[1] : null;
     $sub = $parts[1] ?? null;
+    $sub2 = $parts[2] ?? null;
 
     if ($sub === 'active') {
         $blocks->active();
@@ -109,6 +112,12 @@ elseif ($parts[0] === 'blocks') {
         $blocks->importFromImage();
     } elseif ($sub === 'import-confirm') {
         $blocks->importConfirm();
+    } elseif ($id && $sub2 === 'complements') {
+        match($method) {
+            'GET'  => $complements->listByBlock($id),
+            'POST' => $complements->create($id),
+            default => json_error('Not found', 404),
+        };
     } else {
         match([$method, $id !== null]) {
             ['GET',    false] => $blocks->list(),
@@ -119,6 +128,16 @@ elseif ($parts[0] === 'blocks') {
             default           => json_error('Not found', 404),
         };
     }
+}
+
+// Complements (standalone)
+elseif ($parts[0] === 'complements') {
+    $id = isset($parts[1]) && is_numeric($parts[1]) ? (int)$parts[1] : null;
+    match([$method, $id !== null]) {
+        ['PUT',    true] => $complements->update($id),
+        ['DELETE', true] => $complements->delete($id),
+        default          => json_error('Not found', 404),
+    };
 }
 
 // Sessions
@@ -148,6 +167,12 @@ elseif ($parts[0] === 'sessions') {
                 default => json_error('Not found', 404),
             };
         }
+    } elseif ($sessionId && $sub === 'complements') {
+        match($method) {
+            'GET'  => $complements->getSessionComplements($sessionId),
+            'POST' => $complements->registerInSession($sessionId),
+            default => json_error('Not found', 404),
+        };
     } else {
         match([$method, $sessionId !== null]) {
             ['GET',    false] => $sessions->list(),

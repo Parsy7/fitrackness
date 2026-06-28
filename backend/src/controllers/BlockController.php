@@ -401,7 +401,35 @@ Lista de ejercicios ya existentes en la base de datos para mapeo:
         $stmt = $this->db->prepare('SELECT * FROM blocks WHERE id = ?');
         $stmt->execute([$id]);
         $block = $stmt->fetch();
-        $block['exercises'] = $this->getBlockExercises($id);
+        $block['exercises']   = $this->getBlockExercises($id);
+        $block['complements'] = $this->getBlockComplements($id);
         return $block;
+    }
+
+    private function getBlockComplements(int $blockId): array {
+        $stmt = $this->db->prepare("
+            SELECT bc.*, GROUP_CONCAT(bce.exercise_id || '|' || e.canonical_name || '|' || COALESCE(bce.reps,'') || '|' || COALESCE(bce.notes,'') || '|' || bce.order_index, ';;') as exercises_raw
+            FROM block_complements bc
+            LEFT JOIN block_complement_exercises bce ON bce.complement_id = bc.id
+            LEFT JOIN exercises e ON e.id = bce.exercise_id
+            WHERE bc.block_id = ?
+            GROUP BY bc.id
+            ORDER BY bc.sub_block, bc.order_index
+        ");
+        $stmt->execute([$blockId]);
+        $rows = $stmt->fetchAll();
+        foreach ($rows as &$row) {
+            $exs = [];
+            if (!empty($row['exercises_raw'])) {
+                foreach (explode(';;', $row['exercises_raw']) as $exStr) {
+                    [$exId, $name, $reps, $notes, $order] = explode('|', $exStr);
+                    if ($exId) $exs[] = ['exercise_id' => $exId, 'canonical_name' => $name, 'reps' => $reps ?: null, 'notes' => $notes ?: null, 'order_index' => (int)$order];
+                }
+                usort($exs, fn($a, $b) => $a['order_index'] - $b['order_index']);
+            }
+            $row['exercises'] = $exs;
+            unset($row['exercises_raw']);
+        }
+        return $rows;
     }
 }
