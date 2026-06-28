@@ -14,14 +14,19 @@ require_once __DIR__ . '/../controllers/StatsController.php';
 
 $db      = Database::connect();
 $method  = $_SERVER['REQUEST_METHOD'];
-$uri     = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Eliminar el prefijo del subdirectorio para que funcione en cualquier ruta base
-// Ej: /sites/fitrackness/backend/auth/login -> /auth/login
-$scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-if ($scriptDir && str_starts_with($uri, $scriptDir)) {
-    $uri = substr($uri, strlen($scriptDir));
+// En servidor real (raíz) PATH_INFO puede no existir o ser igual a REQUEST_URI
+// En local (subdirectorio) PATH_INFO tiene la ruta limpia
+$uri = $_SERVER['PATH_INFO'] ?? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+// Si PATH_INFO no existe, eliminar el subdirectorio base
+if (!isset($_SERVER['PATH_INFO'])) {
+    $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+    if ($scriptDir && $scriptDir !== '/' && str_starts_with($uri, $scriptDir)) {
+        $uri = substr($uri, strlen($scriptDir));
+    }
 }
+
 $uri   = preg_replace('#^/api#', '', $uri) ?: '/';
 $parts = explode('/', trim($uri, '/'));
 if ($parts === ['']) $parts = [];

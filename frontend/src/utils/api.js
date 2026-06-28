@@ -1,4 +1,6 @@
-const BASE = import.meta.env.VITE_API_URL || '/api'
+// La URL base de la API se inyecta por entorno (ver .env.development / .env.production)
+// Dev: Apache de WAMP. Prod: mismo origen del subdominio, ruta relativa /backend
+const BASE = import.meta.env.VITE_API_URL || '/backend'
 
 async function request(method, path, body, isFormData = false) {
   const token = localStorage.getItem('ft_token')

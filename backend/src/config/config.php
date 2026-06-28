@@ -1,5 +1,8 @@
 <?php
-
+$envFile = __DIR__ . '/../../.env';
+if (is_file($envFile)) {
+    foreach (parse_ini_file($envFile) ?: [] as $k => $v) putenv("$k=$v");
+}
 define('DB_PATH', __DIR__ . '/../../database/fitrackness.db');
 define('JWT_SECRET', getenv('JWT_SECRET') ?: 'change_this_secret_in_production');
 define('JWT_EXPIRY', 60 * 60 * 24 * 7); // 7 días
