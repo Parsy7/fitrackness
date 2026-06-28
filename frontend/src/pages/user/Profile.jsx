@@ -30,7 +30,7 @@ export default function Profile() {
   const fileRef = useRef()
 
   const [form, setForm] = useState({
-    name: '', birth_date: '', age: '', sex: '',
+    name: '', last_name: '', birth_date: '', age: '', sex: '',
     height_cm: '', weight_kg: '', conditions: '',
   })
   const [avatarUrl, setAvatarUrl] = useState(null)
@@ -47,6 +47,7 @@ export default function Profile() {
       setAvatarUrl(data.avatar_url || null)
       setForm({
         name:       data.name       || '',
+        last_name:  data.last_name  || '',
         birth_date: data.birth_date || '',
         age:        hasDob ? calcAge(data.birth_date) : (data.age || ''),
         sex:        data.sex        || '',
@@ -78,6 +79,7 @@ export default function Profile() {
     try {
       const payload = {
         name:       form.name,
+        last_name:  form.last_name  || undefined,
         sex:        form.sex        || undefined,
         height_cm:  form.height_cm  ? parseFloat(form.height_cm)  : undefined,
         weight_kg:  form.weight_kg  ? parseFloat(form.weight_kg)  : undefined,
@@ -144,7 +146,7 @@ export default function Profile() {
           {avatarLoading && <div className="spinner" style={{ position: 'absolute' }} />}
         </div>
         <div className="col" style={{ gap: 'var(--gap-sm)' }}>
-          <p className="label">{form.name || 'Tu nombre'}</p>
+          <p className="label">{[form.name, form.last_name].filter(Boolean).join(' ') || 'Tu nombre'}</p>
           <p className="caption text-muted">Toca la foto para cambiarla</p>
           {avatarUrl && (
             <Button variant="ghost" size="sm" onClick={deleteAvatar}>
@@ -170,9 +172,14 @@ export default function Profile() {
           <p className="label text-muted">Datos personales</p>
           <Divider />
 
-          <FormGroup label="Nombre">
-            <Input name="name" value={form.name} onChange={handle} placeholder="Tu nombre" />
-          </FormGroup>
+          <div className="profile-row-3">
+            <FormGroup label="Nombre">
+              <Input name="name" value={form.name} onChange={handle} placeholder="Nombre" />
+            </FormGroup>
+            <FormGroup label="Apellidos">
+              <Input name="last_name" value={form.last_name} onChange={handle} placeholder="Apellidos" />
+            </FormGroup>
+          </div>
 
           <FormGroup label="Sexo">
             <Select name="sex" value={form.sex} onChange={handle}>

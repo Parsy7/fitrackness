@@ -16,6 +16,7 @@ class UserController {
         $params = [];
 
         if (isset($body['name']))       { $fields[] = 'name = ?';       $params[] = trim($body['name']); }
+        if (isset($body['last_name']))   { $fields[] = 'last_name = ?';   $params[] = trim($body['last_name']); }
         if (isset($body['height_cm']))  { $fields[] = 'height_cm = ?';  $params[] = (float)$body['height_cm']; }
         if (isset($body['weight_kg']))  { $fields[] = 'weight_kg = ?';  $params[] = (float)$body['weight_kg']; }
         if (isset($body['conditions'])) { $fields[] = 'conditions = ?'; $params[] = json_encode($body['conditions']); }
@@ -97,7 +98,7 @@ class UserController {
         require_admin();
 
         $page   = (int)($_GET['page'] ?? 1);
-        $sql    = 'SELECT id, name, email, role, age, birth_date, sex, height_cm, weight_kg, conditions, avatar_url, created_at FROM users ORDER BY name';
+        $sql    = 'SELECT id, name, last_name, email, role, age, birth_date, sex, height_cm, weight_kg, conditions, avatar_url, created_at FROM users ORDER BY name';
         $result = paginate($this->db, $sql, [], $page);
 
         foreach ($result['data'] as &$u) {
@@ -111,7 +112,7 @@ class UserController {
     public function getUser(int $id): void {
         require_admin();
 
-        $stmt = $this->db->prepare('SELECT id, name, email, role, age, birth_date, sex, height_cm, weight_kg, conditions, avatar_url, created_at FROM users WHERE id = ?');
+        $stmt = $this->db->prepare('SELECT id, name, last_name, email, role, age, birth_date, sex, height_cm, weight_kg, conditions, avatar_url, created_at FROM users WHERE id = ?');
         $stmt->execute([$id]);
         $user = $stmt->fetch();
 

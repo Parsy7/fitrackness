@@ -8,7 +8,7 @@ import { Modal } from '../../components/ui/Modal'
 import { FormGroup, Input, Select } from '../../components/ui/Form'
 import { Users, Plus, Trash2, ChevronRight, Activity } from 'lucide-react'
 
-const EMPTY_FORM = { name: '', email: '', password: '', role: 'user' }
+const EMPTY_FORM = { name: '', last_name: '', email: '', password: '', role: 'user' }
 
 export default function AdminUsers() {
   const { data, loading, refetch } = useFetch('/admin/users')
@@ -72,7 +72,7 @@ export default function AdminUsers() {
               <div className="row row--between">
                 <div className="col" style={{ gap: 4, flex: 1 }}>
                   <div className="row" style={{ gap: 'var(--gap-sm)' }}>
-                    <p className="subtitle">{u.name}</p>
+                    <p className="subtitle">{[u.name, u.last_name].filter(Boolean).join(' ')}</p>
                     {u.role === 'admin' && <Pill variant="warning">Admin</Pill>}
                   </div>
                   <p className="caption text-muted">{u.email}</p>
@@ -103,7 +103,10 @@ export default function AdminUsers() {
         {error && <Alert type="error">{error}</Alert>}
 
         <FormGroup label="Nombre *">
-          <Input name="name" value={form.name} onChange={handle} placeholder="Nombre completo" />
+          <Input name="name" value={form.name} onChange={handle} placeholder="Nombre" />
+        </FormGroup>
+        <FormGroup label="Apellidos">
+          <Input name="last_name" value={form.last_name} onChange={handle} placeholder="Apellidos" />
         </FormGroup>
         <FormGroup label="Email *">
           <Input name="email" type="email" value={form.email} onChange={handle} placeholder="email@ejemplo.com" />

@@ -44,7 +44,7 @@ class AuthController {
     public function me(): void {
         $auth = require_auth();
 
-        $stmt = $this->db->prepare('SELECT id, name, email, role, age, birth_date, sex, height_cm, weight_kg, conditions, avatar_url, created_at FROM users WHERE id = ?');
+        $stmt = $this->db->prepare('SELECT id, name, last_name, email, role, age, birth_date, sex, height_cm, weight_kg, conditions, avatar_url, created_at FROM users WHERE id = ?');
         $stmt->execute([$auth['id']]);
         $user = $stmt->fetch();
 
@@ -59,10 +59,11 @@ class AuthController {
         require_admin();
 
         $body = get_body();
-        $name     = trim($body['name'] ?? '');
-        $email    = trim($body['email'] ?? '');
-        $password = $body['password'] ?? '';
-        $role     = $body['role'] ?? 'user';
+        $name      = trim($body['name'] ?? '');
+        $last_name = trim($body['last_name'] ?? '');
+        $email     = trim($body['email'] ?? '');
+        $password  = $body['password'] ?? '';
+        $role      = $body['role'] ?? 'user';
 
         if (!$name || !$email || !$password) {
             json_error('Name, email and password are required');
@@ -79,11 +80,11 @@ class AuthController {
         $hash = password_hash($password, PASSWORD_BCRYPT);
 
         try {
-            $stmt = $this->db->prepare('INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)');
-            $stmt->execute([$name, $email, $hash, $role]);
+            $stmt = $this->db->prepare('INSERT INTO users (name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)');
+            $stmt->execute([$name, $last_name ?: null, $email, $hash, $role]);
             $id = $this->db->lastInsertId();
 
-            json_response(['id' => $id, 'name' => $name, 'email' => $email, 'role' => $role], 201);
+            json_response(['id' => $id, 'name' => $name, 'last_name' => $last_name, 'email' => $email, 'role' => $role], 201);
         } catch (PDOException $e) {
             if (str_contains($e->getMessage(), 'UNIQUE')) {
                 json_error('Email already in use', 409);
