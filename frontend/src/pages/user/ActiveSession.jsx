@@ -6,7 +6,7 @@ import { Card, Pill, Alert, Divider } from '../../components/ui/index'
 import { Input } from '../../components/ui/Form'
 import {
   CheckCircle2, XCircle, Circle, ChevronRight, ArrowLeft,
-  Timer, Pause, Play, RotateCcw, Dumbbell, Trophy
+  Timer, Pause, Play, RotateCcw, Dumbbell, Trophy, HelpCircle, X
 } from 'lucide-react'
 import './ActiveSession.css'
 
@@ -146,19 +146,25 @@ function ExerciseView({ ex, onBack, onDone, rest }) {
 
   return (
     <div className="active-view slide-in">
-      {/* Botón volver */}
+      {/* Cabecera: volver | título + ? */}
       <button className="btn btn-ghost btn--sm" style={{ alignSelf: 'flex-start' }} onClick={onBack}>
         <ArrowLeft size={18} /> Volver
       </button>
 
-      {/* Título */}
-      <div className="col" style={{ gap: 2 }}>
-        <h2 className="title-section">{ex.canonical_name}</h2>
-        {ex.recommended_sets && (
-          <p className="caption">
-            Plan: {ex.recommended_sets}×{ex.recommended_reps}
-            {ex.recommended_rest ? ` · ${ex.recommended_rest}s descanso` : ''}
-          </p>
+      <div className="exercise-titlebar">
+        <div className="col" style={{ gap: 2, flex: 1 }}>
+          <h2 className="title-section">{ex.canonical_name}</h2>
+          {ex.recommended_sets && (
+            <p className="caption">
+              Plan: {ex.recommended_sets}×{ex.recommended_reps}
+              {ex.recommended_rest ? ` · ${ex.recommended_rest}s descanso` : ''}
+            </p>
+          )}
+        </div>
+        {detail && (detail.description || detail.muscle_group || detail.equipment || detail.media?.length > 0) && (
+          <button className="ex-help-btn" onClick={() => setInfoOpen(true)} type="button" aria-label="Cómo se hace">
+            <HelpCircle size={22} />
+          </button>
         )}
       </div>
 
@@ -209,56 +215,37 @@ function ExerciseView({ ex, onBack, onDone, rest }) {
         ))}
       </div>
 
-      {/* Info del ejercicio: descripción, músculo, media */}
-      {detail && (detail.description || detail.muscle_group || detail.equipment || detail.media?.length > 0) && (
-        <div className="ex-info-panel">
-          <button
-            className="ex-info-toggle"
-            onClick={() => setInfoOpen(o => !o)}
-            type="button"
-          >
-            <span className="label">Cómo se hace</span>
-            <span className="ex-info-toggle__arrow">{infoOpen ? '▲' : '▼'}</span>
-          </button>
-          {infoOpen && (
-            <div className="ex-info-body">
-              {(detail.muscle_group || detail.equipment) && (
-                <div className="row" style={{ flexWrap: 'wrap' }}>
-                  {detail.muscle_group && (
-                    <span className="pill pill-muted">{detail.muscle_group}</span>
-                  )}
-                  {detail.equipment && (
-                    <span className="pill pill-muted">{detail.equipment}</span>
-                  )}
-                </div>
-              )}
-              {detail.description && (
-                <p className="body-text">{detail.description}</p>
-              )}
-              {detail.media?.length > 0 && (
-                <div className="ex-media-grid">
-                  {detail.media.map((m, i) =>
-                    m.type === 'photo' ? (
-                      <img
-                        key={i}
-                        src={m.url}
-                        alt={m.caption || ex.canonical_name}
-                        className="ex-media-img"
-                      />
-                    ) : (
-                      <video
-                        key={i}
-                        src={m.url}
-                        controls
-                        playsInline
-                        className="ex-media-img"
-                      />
-                    )
-                  )}
-                </div>
-              )}
+      {/* Modal: cómo se hace */}
+      {infoOpen && detail && (
+        <div className="ex-help-overlay" onClick={() => setInfoOpen(false)}>
+          <div className="ex-help-modal" onClick={e => e.stopPropagation()}>
+            <div className="ex-help-modal__header">
+              <h3 className="title-section">{ex.canonical_name}</h3>
+              <button className="btn btn-ghost btn--sm" onClick={() => setInfoOpen(false)} type="button">
+                <X size={20} />
+              </button>
             </div>
-          )}
+            {(detail.muscle_group || detail.equipment) && (
+              <div className="row" style={{ flexWrap: 'wrap', gap: 'var(--gap-sm)' }}>
+                {detail.muscle_group && <span className="pill pill-muted">{detail.muscle_group}</span>}
+                {detail.equipment    && <span className="pill pill-muted">{detail.equipment}</span>}
+              </div>
+            )}
+            {detail.description && (
+              <p className="body-text">{detail.description}</p>
+            )}
+            {detail.media?.length > 0 && (
+              <div className="ex-media-grid">
+                {detail.media.map((m, i) =>
+                  m.type === 'photo' ? (
+                    <img key={i} src={m.url} alt={m.caption || ex.canonical_name} className="ex-media-img" />
+                  ) : (
+                    <video key={i} src={m.url} controls playsInline className="ex-media-img" />
+                  )
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
