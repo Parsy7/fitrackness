@@ -17,7 +17,10 @@ function get_body(): array {
 }
 
 function get_auth_user(): ?array {
-    $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    // Tras el rewrite de .htaccess, la cabecera puede llegar con prefijo REDIRECT_
+    $header = $_SERVER['HTTP_AUTHORIZATION']
+        ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+        ?? '';
     if (!str_starts_with($header, 'Bearer ')) return null;
     $token = substr($header, 7);
     return JWT::decode($token);

@@ -1,4 +1,10 @@
 RewriteEngine On
+
+# Pasa la cabecera Authorization a PHP. Apache/PHP-FPM no la exponen por defecto
+# (necesario para el token Bearer en producción). Inofensivo en local (WAMP).
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]
