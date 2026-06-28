@@ -1,0 +1,24 @@
+.profile-avatar-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--gap-md);
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-row-3 {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-sm);
+}
+
+.profile-row-3 .form-group {
+  flex: 1;
+}

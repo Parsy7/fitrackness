@@ -44,7 +44,7 @@ class AuthController {
     public function me(): void {
         $auth = require_auth();
 
-        $stmt = $this->db->prepare('SELECT id, name, email, role, age, height_cm, weight_kg, conditions, created_at FROM users WHERE id = ?');
+        $stmt = $this->db->prepare('SELECT id, name, email, role, age, birth_date, sex, height_cm, weight_kg, conditions, avatar_url, created_at FROM users WHERE id = ?');
         $stmt->execute([$auth['id']]);
         $user = $stmt->fetch();
 

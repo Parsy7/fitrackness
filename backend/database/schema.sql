@@ -11,10 +11,13 @@ CREATE TABLE IF NOT EXISTS users (
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('admin', 'user')),
-    age INTEGER,
+    birth_date DATE,
+    age INTEGER, -- calculado automáticamente si hay birth_date, editable si no
+    sex TEXT CHECK(sex IN ('male', 'female', 'undisclosed')),
     height_cm REAL,
     weight_kg REAL,
     conditions TEXT, -- JSON array de dolencias/lesiones/condiciones
+    avatar_url TEXT, -- foto de perfil subida por el usuario
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

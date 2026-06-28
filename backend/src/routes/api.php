@@ -56,8 +56,10 @@ if ($parts[0] === 'auth') {
 // Users
 elseif ($parts[0] === 'users') {
     match([$method, $parts[1] ?? '']) {
-        ['PUT', 'profile'] => $users->updateProfile(),
-        default            => json_error('Not found', 404),
+        ['PUT',    'profile'] => $users->updateProfile(),
+        ['POST',   'avatar']  => $users->uploadAvatar(),
+        ['DELETE', 'avatar']  => $users->deleteAvatar(),
+        default               => json_error('Not found', 404),
     };
 }
 
