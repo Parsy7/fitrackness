@@ -231,15 +231,15 @@ export default function AdminBlocks() {
                   />
                 </FormGroup>
 
-                <div className="row" style={{ gap: 'var(--gap-sm)' }}>
-                  <FormGroup label="Series">
-                    <Input type="number" value={be.recommended_sets} onChange={e => updateBE(idx, 'recommended_sets', e.target.value)} placeholder="4" min="1" />
+                <div className="row" style={{ gap: 'var(--gap-sm)', alignItems: 'flex-end' }}>
+                  <FormGroup label="Series" style={{ flex: '0 0 64px' }}>
+                    <Input type="number" value={be.recommended_sets} onChange={e => updateBE(idx, 'recommended_sets', e.target.value)} placeholder="4" min="1" style={{ textAlign: 'center' }} />
                   </FormGroup>
-                  <FormGroup label="Reps">
+                  <FormGroup label="Reps" style={{ flex: '1' }}>
                     <Input value={be.recommended_reps} onChange={e => updateBE(idx, 'recommended_reps', e.target.value)} placeholder="8-10" />
                   </FormGroup>
-                  <FormGroup label="Descanso (s)">
-                    <Input type="number" value={be.recommended_rest_seconds} onChange={e => updateBE(idx, 'recommended_rest_seconds', e.target.value)} placeholder="120" />
+                  <FormGroup label="Desc. (s)" style={{ flex: '0 0 80px' }}>
+                    <Input type="number" value={be.recommended_rest_seconds} onChange={e => updateBE(idx, 'recommended_rest_seconds', e.target.value)} placeholder="120" style={{ textAlign: 'center' }} />
                   </FormGroup>
                 </div>
 
