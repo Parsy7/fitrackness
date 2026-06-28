@@ -2,22 +2,18 @@ import { useState, useRef, useEffect } from 'react'
 import { Search, ChevronDown, X } from 'lucide-react'
 import './ExerciseSelect.css'
 
-/**
- * ExerciseSelect — desplegable de ejercicios con buscador y agrupación por músculo
- * Props:
- *   exercises: array de { id, canonical_name, muscle_group }
- *   value: exercise_id seleccionado
- *   onChange: fn(exercise_id, exercise_object)
- *   placeholder: string opcional
- */
 export function ExerciseSelect({ exercises = [], value, onChange, placeholder = '— Seleccionar ejercicio —' }) {
   const [open, setOpen]     = useState(false)
   const [search, setSearch] = useState('')
   const containerRef        = useRef(null)
   const searchRef           = useRef(null)
 
-  const selected = value !== '' && value !== null && value !== undefined
-    ? exercises.find(e => e.id === parseInt(value))
+  // Normalizar value siempre a int o null para comparaciones seguras
+  const numValue = value !== '' && value !== null && value !== undefined ? parseInt(value) : null
+
+  // Buscar el ejercicio seleccionado — depende de exercises y value
+  const selected = numValue !== null
+    ? exercises.find(e => parseInt(e.id) === numValue) ?? null
     : null
 
   // Cerrar al hacer clic fuera
@@ -50,7 +46,6 @@ export function ExerciseSelect({ exercises = [], value, onChange, placeholder = 
     return acc
   }, {})
 
-  // Orden de grupos
   const GROUP_ORDER = ['Piernas', 'Pecho', 'Espalda', 'Hombros', 'Brazos', 'Core', 'Cardio', 'Full Body', 'Sin clasificar']
   const sortedGroups = Object.entries(groups).sort(([a], [b]) => {
     const ia = GROUP_ORDER.indexOf(a)
@@ -59,7 +54,7 @@ export function ExerciseSelect({ exercises = [], value, onChange, placeholder = 
   })
 
   const select = (ex) => {
-    onChange(ex.id, ex)
+    onChange(parseInt(ex.id), ex)
     setOpen(false)
     setSearch('')
   }
@@ -71,7 +66,6 @@ export function ExerciseSelect({ exercises = [], value, onChange, placeholder = 
 
   return (
     <div className="ex-select" ref={containerRef}>
-      {/* Trigger */}
       <div
         className={`ex-select__trigger ${open ? 'ex-select__trigger--open' : ''}`}
         onClick={() => setOpen(o => !o)}
@@ -83,6 +77,14 @@ export function ExerciseSelect({ exercises = [], value, onChange, placeholder = 
               <span className="ex-select__group-tag">{selected.muscle_group}</span>
             )}
           </div>
+        ) : numValue !== null && exercises.length === 0 ? (
+          // Ejercicios aún cargando — mostrar ID como placeholder
+          <span className="ex-select__placeholder">Cargando...</span>
+        ) : numValue !== null && !selected ? (
+          // ID existe pero no está en la lista — mostrar aviso
+          <span className="ex-select__placeholder" style={{ color: 'var(--color-warning)' }}>
+            Ejercicio no encontrado (id:{numValue})
+          </span>
         ) : (
           <span className="ex-select__placeholder">{placeholder}</span>
         )}
@@ -96,10 +98,8 @@ export function ExerciseSelect({ exercises = [], value, onChange, placeholder = 
         </div>
       </div>
 
-      {/* Dropdown */}
       {open && (
         <div className="ex-select__dropdown">
-          {/* Buscador */}
           <div className="ex-select__search-wrap">
             <Search size={14} className="ex-select__search-icon" />
             <input
@@ -117,7 +117,6 @@ export function ExerciseSelect({ exercises = [], value, onChange, placeholder = 
             )}
           </div>
 
-          {/* Lista agrupada */}
           <div className="ex-select__list">
             {sortedGroups.length === 0 ? (
               <div className="ex-select__empty">Sin resultados</div>
@@ -128,7 +127,7 @@ export function ExerciseSelect({ exercises = [], value, onChange, placeholder = 
                   {exs.map(ex => (
                     <div
                       key={ex.id}
-                      className={`ex-select__option ${parseInt(ex.id) === parseInt(value) ? 'ex-select__option--active' : ''}`}
+                      className={`ex-select__option ${parseInt(ex.id) === numValue ? 'ex-select__option--active' : ''}`}
                       onClick={() => select(ex)}
                     >
                       {ex.canonical_name}

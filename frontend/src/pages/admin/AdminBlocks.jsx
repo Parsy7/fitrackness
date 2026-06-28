@@ -13,7 +13,7 @@ const EMPTY_FORM = { name: '', start_date: new Date().toISOString().split('T')[0
 
 export default function AdminBlocks() {
   const { data, loading, refetch } = useFetch('/blocks')
-  const { data: exData }           = useFetch('/exercises?limit=500')
+  const { data: exData, loading: loadingEx } = useFetch('/exercises?limit=1000')
   const exercises = exData?.data || []
 
   const [modal, setModal]     = useState(false)
@@ -38,7 +38,7 @@ export default function AdminBlocks() {
     setEditing(block)
     setForm({ name: block.name, start_date: block.start_date, notes: block.notes || '' })
     setBlockExs((block.exercises || []).map(be => ({
-      exercise_id:             be.exercise_id ? parseInt(be.exercise_id) : '',
+      exercise_id:             be.exercise_id != null && be.exercise_id !== '' ? parseInt(be.exercise_id) : '',
       canonical_name:          be.canonical_name,
       sub_block:               be.sub_block || 'A',
       recommended_sets:        be.recommended_sets  || '',
@@ -144,7 +144,7 @@ export default function AdminBlocks() {
                 </div>
                 <div className="row">
                   <Pill variant="muted">{b.exercises?.length || 0} ej.</Pill>
-                  <Button variant="ghost" size="sm" onClick={() => openEdit(b)}><Pencil size={16} /></Button>
+                  <Button variant="ghost" size="sm" onClick={() => openEdit(b)} disabled={loadingEx}><Pencil size={16} /></Button>
                   <Button variant="ghost" size="sm" onClick={() => deleteBlock(b.id)}><Trash2 size={16} style={{ color: 'var(--color-error)' }} /></Button>
                 </div>
               </div>
