@@ -529,7 +529,7 @@ export default function ActiveSession() {
     setComplementStates(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: val } : s))
 
   // ── Cerrar y navegar al detalle de sesión ───────────────────────────────
-  const closeSession = () => navigate(`/session/${sessionId}`)
+  const closeSession = () => navigate(`/session/${sessionId}`, { replace: true })
 
   const doneCount = exercises.filter(e => e.status === STATUS.DONE).length
 
