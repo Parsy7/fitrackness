@@ -6,7 +6,7 @@ import { Card, Pill, Alert, Divider } from '../../components/ui/index'
 import { Input } from '../../components/ui/Form'
 import {
   CheckCircle2, XCircle, Circle, ChevronRight, ArrowLeft,
-  Timer, Pause, Play, RotateCcw, Dumbbell, Trophy, HelpCircle, X
+  Timer, Pause, Play, RotateCcw, Dumbbell, Trophy, X
 } from 'lucide-react'
 import './ActiveSession.css'
 
@@ -162,8 +162,8 @@ function ExerciseView({ ex, onBack, onDone, rest }) {
           )}
         </div>
         {detail && (detail.description || detail.muscle_group || detail.equipment || detail.media?.length > 0) && (
-          <button className="ex-help-btn" onClick={() => setInfoOpen(true)} type="button" aria-label="Cómo se hace">
-            <HelpCircle size={22} />
+          <button className="ex-help-btn" onClick={() => setInfoOpen(true)} type="button">
+            Ayuda
           </button>
         )}
       </div>
@@ -245,6 +245,9 @@ function ExerciseView({ ex, onBack, onDone, rest }) {
                 )}
               </div>
             )}
+            <button className="btn btn-secondary btn--full" onClick={() => setInfoOpen(false)} type="button">
+              Cerrar
+            </button>
           </div>
         </div>
       )}
