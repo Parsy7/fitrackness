@@ -88,6 +88,11 @@ elseif ($parts[0] === 'exercises') {
             ['DELETE', true]  => $exercises->deleteMedia($id, $mediaId),
             default           => json_error('Not found', 404),
         };
+    } elseif ($id && $sub === 'last-weight') {
+        match($method) {
+            'GET'   => $exercises->lastWeight($id),
+            default => json_error('Not found', 404),
+        };
     } else {
         match([$method, $id !== null]) {
             ['GET',    false] => $exercises->list(),

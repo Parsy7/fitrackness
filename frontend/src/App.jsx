@@ -9,6 +9,7 @@ import Home          from './pages/user/Home'
 import Sessions      from './pages/user/Sessions'
 import SessionDetail from './pages/user/SessionDetail'
 import NewSession    from './pages/user/NewSession'
+import ActiveSession from './pages/user/ActiveSession'
 import Stats         from './pages/user/Stats'
 import Profile       from './pages/user/Profile'
 
@@ -45,6 +46,7 @@ function AppRoutes() {
       <Route path="/"               element={<PrivateRoute><Layout><Home /></Layout></PrivateRoute>} />
       <Route path="/sessions"       element={<PrivateRoute><Layout><Sessions /></Layout></PrivateRoute>} />
       <Route path="/session/new"    element={<PrivateRoute><Layout><NewSession /></Layout></PrivateRoute>} />
+      <Route path="/session/active" element={<PrivateRoute><ActiveSession /></PrivateRoute>} />
       <Route path="/session/:id"    element={<PrivateRoute><Layout><SessionDetail /></Layout></PrivateRoute>} />
       <Route path="/stats"          element={<PrivateRoute><Layout><Stats /></Layout></PrivateRoute>} />
       <Route path="/profile"        element={<PrivateRoute><Layout><Profile /></Layout></PrivateRoute>} />

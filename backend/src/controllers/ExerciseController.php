@@ -60,6 +60,38 @@ class ExerciseController {
         json_response($ex);
     }
 
+    // GET /api/exercises/:id/last-weight
+    // Devuelve el último peso registrado por el usuario para este ejercicio
+    public function lastWeight(int $id): void {
+        require_auth();
+        global $current_user;
+
+        $stmt = $this->db->prepare('
+            SELECT se.weight_kg, se.reps_done, se.sets_done, s.session_date
+            FROM session_exercises se
+            JOIN sessions s ON s.id = se.session_id
+            WHERE se.exercise_id = ?
+              AND s.user_id = ?
+              AND se.weight_kg IS NOT NULL
+            ORDER BY s.session_date DESC, se.id DESC
+            LIMIT 1
+        ');
+        $stmt->execute([$id, $current_user['id']]);
+        $row = $stmt->fetch();
+
+        if (!$row) {
+            json_response(['weight_kg' => null, 'reps_done' => null, 'sets_done' => null, 'session_date' => null]);
+            return;
+        }
+
+        json_response([
+            'weight_kg'    => $row['weight_kg'] ? (float)$row['weight_kg'] : null,
+            'reps_done'    => $row['reps_done'],
+            'sets_done'    => $row['sets_done'] ? (int)$row['sets_done'] : null,
+            'session_date' => $row['session_date'],
+        ]);
+    }
+
     // POST /api/exercises (admin)
     public function create(): void {
         require_admin();

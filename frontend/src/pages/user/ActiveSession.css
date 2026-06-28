@@ -1,0 +1,244 @@
+/* ============================================================
+   ActiveSession — pantalla de entreno activo
+   Mobile-first. Sin sombras. Sin hardcoded values.
+   ============================================================ */
+
+/* ── Contenedor raíz (reemplaza .page, sin padding-bottom de nav) ── */
+.active-session {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--color-bg);
+}
+
+/* ── Barra superior fija ─────────────────────────────────────────── */
+.active-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg-card);
+  border-bottom: var(--border-card);
+  padding: 10px var(--padding-page);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--gap-md);
+}
+
+.active-timer {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  letter-spacing: 0.04em;
+}
+
+/* ── Vista genérica (LIST / EXERCISE / COMPLEMENTS / SUMMARY) ──── */
+.active-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+  padding: var(--padding-page);
+  padding-bottom: 32px;
+  flex: 1;
+}
+
+/* Animación slide-in para vistas de ejercicio y summary */
+.slide-in {
+  animation: slideIn 0.22s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(24px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ── Fila de ejercicio en la lista ───────────────────────────────── */
+.ex-row {
+  width: 100%;
+  background: var(--color-bg-card);
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  padding: var(--padding-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.ex-row:active {
+  background: var(--color-bg-elevated);
+}
+
+.ex-row--done {
+  border-color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success) 8%, var(--color-bg-card));
+}
+
+.ex-row--done:active {
+  background: color-mix(in srgb, var(--color-success) 14%, var(--color-bg-card));
+}
+
+.ex-row__name {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.ex-row--done .ex-row__name {
+  color: var(--color-text-muted);
+}
+
+.ex-row__summary {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--gap-sm);
+}
+
+/* Iconos de estado */
+.ex-icon--done    { color: var(--color-success); }
+.ex-icon--active  { color: var(--color-primary); }
+.ex-icon--pending { color: var(--color-border-strong); }
+
+/* ── Banner de último peso ───────────────────────────────────────── */
+.last-weight-banner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--gap-sm);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+  border-radius: var(--radius-sm);
+  padding: 10px var(--padding-card);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.last-weight-banner svg {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* ── Cabecera del ejercicio activo ───────────────────────────────── */
+.exercise-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--gap-md);
+}
+
+/* ── Lista de series ─────────────────────────────────────────────── */
+.sets-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+.set-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: var(--gap-sm);
+  background: var(--color-bg-card);
+  border: var(--border-card);
+  border-radius: var(--radius-sm);
+  padding: var(--padding-card);
+  transition: background 0.15s;
+}
+
+.set-row--done {
+  border-color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success) 8%, var(--color-bg-card));
+  opacity: 0.8;
+}
+
+.set-num {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  min-width: 28px;
+  line-height: 1;
+  padding-bottom: 10px; /* alinear con el input */
+}
+
+.set-inputs {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-sm);
+  flex: 1;
+}
+
+.set-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.set-done-btn {
+  flex-shrink: 0;
+  align-self: flex-end;
+  min-width: 72px;
+}
+
+.set-check {
+  color: var(--color-success);
+  flex-shrink: 0;
+  align-self: flex-end;
+  margin-bottom: 10px;
+}
+
+/* ── Panel de descanso ───────────────────────────────────────────── */
+.rest-panel {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-card);
+  padding: var(--padding-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+.rest-panel__top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+
+.rest-display {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  margin-left: auto;
+  letter-spacing: 0.04em;
+}
+
+/* ── Resumen final ───────────────────────────────────────────────── */
+.summary-trophy {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--padding-page);
+}
+
+.summary-stats {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background: var(--color-bg-card);
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  padding: var(--padding-card);
+}
+
+.summary-ex {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
