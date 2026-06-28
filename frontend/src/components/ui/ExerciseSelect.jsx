@@ -16,7 +16,9 @@ export function ExerciseSelect({ exercises = [], value, onChange, placeholder = 
   const containerRef        = useRef(null)
   const searchRef           = useRef(null)
 
-  const selected = exercises.find(e => e.id === parseInt(value))
+  const selected = value !== '' && value !== null && value !== undefined
+    ? exercises.find(e => e.id === parseInt(value))
+    : null
 
   // Cerrar al hacer clic fuera
   useEffect(() => {
@@ -126,7 +128,7 @@ export function ExerciseSelect({ exercises = [], value, onChange, placeholder = 
                   {exs.map(ex => (
                     <div
                       key={ex.id}
-                      className={`ex-select__option ${ex.id === parseInt(value) ? 'ex-select__option--active' : ''}`}
+                      className={`ex-select__option ${parseInt(ex.id) === parseInt(value) ? 'ex-select__option--active' : ''}`}
                       onClick={() => select(ex)}
                     >
                       {ex.canonical_name}

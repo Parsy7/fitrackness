@@ -38,7 +38,7 @@ export default function AdminBlocks() {
     setEditing(block)
     setForm({ name: block.name, start_date: block.start_date, notes: block.notes || '' })
     setBlockExs((block.exercises || []).map(be => ({
-      exercise_id:             be.exercise_id,
+      exercise_id:             be.exercise_id ? parseInt(be.exercise_id) : '',
       canonical_name:          be.canonical_name,
       sub_block:               be.sub_block || 'A',
       recommended_sets:        be.recommended_sets  || '',
