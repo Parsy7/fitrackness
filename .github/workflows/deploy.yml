@@ -28,7 +28,7 @@ jobs:
 
       # 1) Front compilado -> raíz del subdominio. Excluye /backend para no tocar la API.
       - name: Deploy frontend to docroot
-        uses: easingthemes/ssh-deploy@v5
+        uses: easingthemes/ssh-deploy@v5.1.2
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.SSH_HOST }}
@@ -40,7 +40,7 @@ jobs:
 
       # 2) Backend PHP -> /backend. Excluye secretos y datos que viven solo en el servidor.
       - name: Deploy backend to /backend
-        uses: easingthemes/ssh-deploy@v5
+        uses: easingthemes/ssh-deploy@v5.1.2
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.SSH_HOST }}
