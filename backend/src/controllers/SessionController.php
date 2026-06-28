@@ -53,8 +53,9 @@ class SessionController {
             $blockId = $block ? $block['id'] : null;
         }
 
-        $stmt = $this->db->prepare('INSERT INTO sessions (user_id, block_id, session_date, type, general_notes) VALUES (?, ?, ?, ?, ?)');
-        $stmt->execute([$auth['id'], $blockId, $date, $type, $body['general_notes'] ?? null]);
+        $subBlock = $body['sub_block'] ?? null;
+        $stmt = $this->db->prepare('INSERT INTO sessions (user_id, block_id, session_date, type, sub_block, general_notes) VALUES (?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$auth['id'], $blockId, $date, $type, $subBlock, $body['general_notes'] ?? null]);
         $id = (int)$this->db->lastInsertId();
 
         json_response($this->getById($id, $auth['id']), 201);
