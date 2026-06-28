@@ -161,11 +161,17 @@ Lista de ejercicios ya existentes en la base de datos para mapeo:
         // Limpiar archivo temporal de imagen
         delete_upload($path);
 
-        if (!$response) json_error('Error processing image with AI', 500);
+        if (!$response) json_error('La IA no devolvió respuesta', 500);
+
+        // Limpiar posibles fences de markdown ```json ... ```
+        $clean = trim($response);
+        $clean = preg_replace('/^```(?:json)?/', '', $clean);
+        $clean = preg_replace('/```$/', '', $clean);
+        $clean = trim($clean);
 
         // Intentar parsear JSON
-        $extracted = json_decode($response, true);
-        if (!$extracted) json_error('Could not parse AI response', 500);
+        $extracted = json_decode($clean, true);
+        if (!$extracted) json_error('No se pudo interpretar la respuesta de la IA: ' . substr($clean, 0, 200), 500);
 
         // Mapear ejercicios con los existentes
         $result = $this->mapExercises($extracted, $exerciseList);
@@ -342,6 +348,10 @@ Lista de ejercicios ya existentes en la base de datos para mapeo:
     }
 
     private function callClaudeVision(string $imageData, string $mimeType, string $prompt): ?string {
+        if (!ANTHROPIC_API_KEY) {
+            json_error('La clave de la API de Claude no está configurada en el servidor (ANTHROPIC_API_KEY)', 500);
+        }
+
         $payload = [
             'model'      => ANTHROPIC_MODEL,
             'max_tokens' => 4096,
@@ -359,6 +369,7 @@ Lista de ejercicios ya existentes en la base de datos para mapeo:
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST           => true,
             CURLOPT_POSTFIELDS     => json_encode($payload),
+            CURLOPT_TIMEOUT        => 60,
             CURLOPT_HTTPHEADER     => [
                 'Content-Type: application/json',
                 'x-api-key: ' . ANTHROPIC_API_KEY,
@@ -367,11 +378,22 @@ Lista de ejercicios ya existentes en la base de datos para mapeo:
         ]);
 
         $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlErr  = curl_error($ch);
         curl_close($ch);
 
-        if (!$response) return null;
+        if ($curlErr) {
+            json_error('Error de conexión con la API de Claude: ' . $curlErr, 500);
+        }
 
         $data = json_decode($response, true);
+
+        // Si la API devuelve un error, mostrarlo
+        if ($httpCode !== 200) {
+            $apiMsg = $data['error']['message'] ?? $response;
+            json_error('La API de Claude devolvió un error (' . $httpCode . '): ' . $apiMsg, 500);
+        }
+
         return $data['content'][0]['text'] ?? null;
     }
 
