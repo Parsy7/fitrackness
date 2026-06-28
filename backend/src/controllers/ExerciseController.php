@@ -14,6 +14,7 @@ class ExerciseController {
         $search = $_GET['search'] ?? '';
         $group  = $_GET['muscle_group'] ?? '';
         $page   = (int)($_GET['page'] ?? 1);
+        $limit  = min((int)($_GET['limit'] ?? 20), 2000); // máximo 2000
 
         $where  = [];
         $params = [];
@@ -31,7 +32,7 @@ class ExerciseController {
         $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
         $sql = "SELECT e.id, e.canonical_name, e.description, e.muscle_group, e.equipment, e.adaptations, e.created_at FROM exercises e $whereSql ORDER BY e.canonical_name";
 
-        $result = paginate($this->db, $sql, $params, $page);
+        $result = paginate($this->db, $sql, $params, $page, $limit);
 
         foreach ($result['data'] as &$ex) {
             $ex['adaptations'] = json_decode($ex['adaptations'] ?? '[]', true);
