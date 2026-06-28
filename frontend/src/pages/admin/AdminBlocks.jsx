@@ -5,14 +5,15 @@ import { Card, Pill, EmptyState, LoadingPage, Alert, Divider } from '../../compo
 import { Button } from '../../components/ui/Button'
 import { Modal } from '../../components/ui/Modal'
 import { FormGroup, Input, Textarea, Select } from '../../components/ui/Form'
-import { Plus, Pencil, Trash2, Layers, ChevronDown, ChevronUp, GripVertical } from 'lucide-react'
+import { Plus, Pencil, Trash2, Layers, ChevronDown, ChevronUp } from 'lucide-react'
+import { ExerciseSelect } from '../../components/ui/ExerciseSelect'
 
 const SUB_BLOCKS = ['A', 'B', 'C', 'D', 'E', 'General']
 const EMPTY_FORM = { name: '', start_date: new Date().toISOString().split('T')[0], notes: '' }
 
 export default function AdminBlocks() {
   const { data, loading, refetch } = useFetch('/blocks')
-  const { data: exData }           = useFetch('/exercises?limit=200')
+  const { data: exData }           = useFetch('/exercises?limit=500')
   const exercises = exData?.data || []
 
   const [modal, setModal]     = useState(false)
@@ -223,10 +224,11 @@ export default function AdminBlocks() {
                 </div>
 
                 <FormGroup label="Ejercicio">
-                  <Select value={be.exercise_id} onChange={e => updateBE(idx, 'exercise_id', e.target.value)}>
-                    <option value="">— Seleccionar —</option>
-                    {exercises.map(ex => <option key={ex.id} value={ex.id}>{ex.canonical_name}</option>)}
-                  </Select>
+                  <ExerciseSelect
+                    exercises={exercises}
+                    value={be.exercise_id}
+                    onChange={(id) => updateBE(idx, 'exercise_id', id)}
+                  />
                 </FormGroup>
 
                 <div className="row" style={{ gap: 'var(--gap-sm)' }}>
