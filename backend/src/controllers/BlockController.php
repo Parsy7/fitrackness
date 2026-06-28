@@ -15,7 +15,8 @@ class BlockController {
         $blocks = $stmt->fetchAll();
 
         foreach ($blocks as &$b) {
-            $b['exercises'] = $this->getBlockExercises($b['id']);
+            $b['exercises']   = $this->getBlockExercises($b['id']);
+            $b['complements'] = $this->getBlockComplements($b['id']);
         }
 
         json_response($blocks);
@@ -31,7 +32,8 @@ class BlockController {
 
         if (!$block) json_error('No active block found', 404);
 
-        $block['exercises'] = $this->getBlockExercises($block['id']);
+        $block['exercises']   = $this->getBlockExercises($block['id']);
+        $block['complements'] = $this->getBlockComplements($block['id']);
         json_response($block);
     }
 
@@ -45,7 +47,8 @@ class BlockController {
 
         if (!$block) json_error('Block not found', 404);
 
-        $block['exercises'] = $this->getBlockExercises($id);
+        $block['exercises']   = $this->getBlockExercises($id);
+        $block['complements'] = $this->getBlockComplements($id);
         json_response($block);
     }
 
