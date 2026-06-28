@@ -1,0 +1,51 @@
+name: Deploy to production
+
+# Se despliega solo al hacer push a main (o manualmente desde la pestaña Actions).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Build frontend (genera frontend/dist con VITE_API_URL=/backend)
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      # 1) Front compilado -> raíz del subdominio. Excluye /backend para no tocar la API.
+      - name: Deploy frontend to docroot
+        uses: easingthemes/ssh-deploy@v5
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          REMOTE_PORT: ${{ secrets.SSH_PORT }}
+          SOURCE: "frontend/dist/"
+          TARGET: "/var/www/vhosts/letsshuffle.es/fitrackness.letsshuffle.es/"
+          EXCLUDE: "/backend/"
+
+      # 2) Backend PHP -> /backend. Excluye secretos y datos que viven solo en el servidor.
+      - name: Deploy backend to /backend
+        uses: easingthemes/ssh-deploy@v5
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          REMOTE_PORT: ${{ secrets.SSH_PORT }}
+          SOURCE: "backend/"
+          TARGET: "/var/www/vhosts/letsshuffle.es/fitrackness.letsshuffle.es/backend/"
+          EXCLUDE: ".env, database/, uploads/, *.db"

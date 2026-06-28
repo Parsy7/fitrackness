@@ -1,0 +1,9 @@
+# SPA fallback para React Router (BrowserRouter) en producción.
+# Sirve index.html para las rutas del cliente (p.ej. /sesiones, /perfil),
+# salvo archivos/carpetas reales y la API, que vive en /backend.
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_URI} !^/backend
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]
