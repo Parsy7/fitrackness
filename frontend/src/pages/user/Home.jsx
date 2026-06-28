@@ -15,7 +15,8 @@ export default function Home() {
   const { data: sessions, loading: loadingSessions } = useFetch('/sessions?page=1')
   const { data: block,    loading: loadingBlock }    = useFetch('/blocks/active')
 
-  const [expandedSub, setExpandedSub] = useState(null) // sub-bloque expandido
+  const [selectedSub, setSelectedSub] = useState(null) // sub-bloque seleccionado para entrenar
+  const [expandedSub, setExpandedSub] = useState(null)  // sub-bloque expandido en acordeón
 
   if (loadingStats || loadingSessions || loadingBlock) return <LoadingPage />
 
@@ -72,25 +73,21 @@ export default function Home() {
               <div key={sub} className="subblock-item">
                 {/* Header del sub-bloque */}
                 <div
-                  className="subblock-header"
-                  onClick={() => setExpandedSub(expandedSub === sub ? null : sub)}
+                  className={`subblock-header ${selectedSub === sub ? 'subblock-header--selected' : ''}`}
+                  onClick={() => {
+                    setSelectedSub(sub)
+                    setExpandedSub(expandedSub === sub ? null : sub)
+                  }}
                 >
                   <div className="row" style={{ gap: 'var(--gap-sm)' }}>
-                    <span className="subblock-letter">{sub}</span>
+                    <span className={`subblock-letter ${selectedSub === sub ? 'subblock-letter--selected' : ''}`}>{sub}</span>
                     <span className="label">{exercises.length} ejercicios</span>
+                    {selectedSub === sub && <span className="pill pill-primary" style={{ fontSize: 'var(--text-xs)', padding: '1px 8px' }}>Seleccionado</span>}
                   </div>
-                  <div className="row" style={{ gap: 'var(--gap-sm)' }}>
-                    <Button
-                      size="sm"
-                      onClick={e => { e.stopPropagation(); navigate('/session/new') }}
-                    >
-                      <Dumbbell size={14} /> Hacer
-                    </Button>
-                    {expandedSub === sub
-                      ? <ChevronUp size={16} style={{ color: 'var(--color-text-muted)' }} />
-                      : <ChevronDown size={16} style={{ color: 'var(--color-text-muted)' }} />
-                    }
-                  </div>
+                  {expandedSub === sub
+                    ? <ChevronUp size={16} style={{ color: 'var(--color-text-muted)' }} />
+                    : <ChevronDown size={16} style={{ color: 'var(--color-text-muted)' }} />
+                  }
                 </div>
 
                 {/* Lista de ejercicios del sub-bloque */}
@@ -125,8 +122,13 @@ export default function Home() {
 
           <Divider />
 
-          <Button full onClick={() => navigate('/session/new')}>
-            <Dumbbell size={18} /> Registrar sesión
+          <Button
+            full
+            size="lg"
+            disabled={!selectedSub}
+            onClick={() => navigate('/session/new', { state: { preselectedSub: selectedSub } })}
+          >
+            <Dumbbell size={18} /> {selectedSub ? `Empezar bloque ${selectedSub}` : 'Elige un sub-bloque'}
           </Button>
         </Card>
       ) : (

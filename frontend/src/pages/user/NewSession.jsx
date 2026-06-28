@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useFetch } from '../../hooks/useFetch'
 import { api } from '../../utils/api'
 import { Card, Alert, LoadingPage, EmptyState } from '../../components/ui/index'
@@ -8,10 +8,11 @@ import { Dumbbell } from 'lucide-react'
 import './NewSession.css'
 
 export default function NewSession() {
-  const navigate = useNavigate()
+  const navigate  = useNavigate()
+  const { state }  = useLocation()
   const { data: block, loading } = useFetch('/blocks/active')
 
-  const [subBlock, setSubBlock] = useState('')
+  const [subBlock, setSubBlock] = useState(state?.preselectedSub ?? '')
   const [starting, setStarting] = useState(false)
   const [error,    setError]    = useState('')
 

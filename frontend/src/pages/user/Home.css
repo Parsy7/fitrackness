@@ -57,3 +57,12 @@
   flex-shrink: 0;
   padding-top: 2px;
 }
+
+.subblock-header--selected {
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-bg-elevated));
+  border-left: 3px solid var(--color-primary);
+}
+
+.subblock-letter--selected {
+  color: var(--color-primary-light);
+}
