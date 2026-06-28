@@ -183,9 +183,15 @@ class ExerciseController {
     private function syncAliases(int $exerciseId, array $aliases): void {
         $this->db->prepare('DELETE FROM exercise_aliases WHERE exercise_id = ?')->execute([$exerciseId]);
         $stmt = $this->db->prepare('INSERT INTO exercise_aliases (exercise_id, alias) VALUES (?, ?)');
+        // Deduplicar ignorando mayúsculas/minúsculas y espacios
+        $seen = [];
         foreach ($aliases as $alias) {
             $alias = trim($alias);
-            if ($alias) $stmt->execute([$exerciseId, $alias]);
+            $key   = mb_strtolower($alias);
+            if ($alias && !in_array($key, $seen)) {
+                $seen[] = $key;
+                $stmt->execute([$exerciseId, $alias]);
+            }
         }
     }
 
