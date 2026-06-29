@@ -6,15 +6,13 @@ import { Card, Pill, Alert, Divider } from '../../components/ui/index'
 import { Input } from '../../components/ui/Form'
 import {
   CheckCircle2, XCircle, MinusCircle, Circle, ChevronRight, ArrowLeft,
-  Timer, Pause, Play, RotateCcw, Dumbbell, X
+  Timer, Pause, Play, RotateCcw, Dumbbell, X, Trophy
 } from 'lucide-react'
-import './ActiveSession.css'
-
 import './ActiveSession.css'
 
 // ─── Constantes de estado ────────────────────────────────────────────────────
 const STATUS = { PENDING: 'pending', ACTIVE: 'active', DONE: 'done', SKIPPED: 'skipped' }
-const VIEW   = { LIST: 'list', EXERCISE: 'exercise' }
+const VIEW   = { LIST: 'list', EXERCISE: 'exercise', SUMMARY: 'summary' }
 
 // ─── Hook: cronómetro general ─────────────────────────────────────────────────
 function useStopwatch(active = true) {
@@ -342,6 +340,96 @@ function ComplementsView({ complements, onDone }) {
   )
 }
 
+// ─── Vista: resumen final ────────────────────────────────────────────────────
+function SummaryView({ exercises, complements, complementStates, totalTime, onClose }) {
+  return (
+    <div className="active-view slide-in">
+
+      {/* Trofeo + título */}
+      <div className="summary-hero">
+        <Trophy size={44} className="text-primary" />
+        <h1 className="title-page">¡Entreno completado!</h1>
+        <div className="summary-stats">
+          <div className="summary-stat">
+            <span className="summary-stat__value">{totalTime}</span>
+            <span className="summary-stat__label">Tiempo</span>
+          </div>
+          <div className="summary-stat">
+            <span className="summary-stat__value">{exercises.filter(e => e.status === STATUS.DONE).length}/{exercises.length}</span>
+            <span className="summary-stat__label">Ejercicios</span>
+          </div>
+          <div className="summary-stat">
+            <span className="summary-stat__value">{exercises.reduce((a, e) => a + e.sets.filter(s => s.done).length, 0)}</span>
+            <span className="summary-stat__label">Series</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Lista de ejercicios */}
+      <div className="col" style={{ gap: 'var(--gap-sm)' }}>
+        {exercises.map((ex, i) => {
+          const done    = ex.status === STATUS.DONE
+          const skipped = ex.status === STATUS.SKIPPED
+          return (
+            <div key={i} className={`summary-ex-row ${skipped ? 'summary-ex-row--skipped' : ''}`}>
+              <div className="row" style={{ gap: 'var(--gap-md)' }}>
+                {done
+                  ? <CheckCircle2 size={20} className="text-success" />
+                  : <MinusCircle  size={20} className="summary-ex-row__skip-icon" />
+                }
+                <div className="col" style={{ gap: 2, flex: 1 }}>
+                  <span className="label">{ex.canonical_name}</span>
+                  {done && ex.sets.filter(s => s.done && s.weight_kg).length > 0 && (
+                    <div className="row" style={{ flexWrap: 'wrap', gap: 'var(--gap-sm)' }}>
+                      {ex.sets.filter(s => s.done).map((s, j) => (
+                        s.weight_kg
+                          ? <span key={j} className="pill pill-muted">{s.weight_kg}kg × {s.reps}</span>
+                          : <span key={j} className="pill pill-muted">{s.reps} reps</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Complementos */}
+      {complements.length > 0 && (
+        <>
+          <div className="summary-section-title">Complementos</div>
+          <div className="col" style={{ gap: 'var(--gap-sm)' }}>
+            {complements.map((c, i) => {
+              const cs   = complementStates[i]
+              const done = cs?.done === true
+              const skip = cs?.done === false || cs?.done === null
+              return (
+                <div key={c.id} className={`summary-ex-row ${skip && cs?.done !== true ? 'summary-ex-row--skipped' : ''}`}>
+                  <div className="row" style={{ gap: 'var(--gap-md)' }}>
+                    {done
+                      ? <CheckCircle2 size={20} className="text-success" />
+                      : <MinusCircle  size={20} className="summary-ex-row__skip-icon" />
+                    }
+                    <div className="col" style={{ gap: 2, flex: 1 }}>
+                      <span className="label">
+                        {c.methodology}{c.parameter ? ` · ${c.parameter}` : ''}
+                      </span>
+                      {cs?.observations && <span className="caption text-muted">{cs.observations}</span>}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+
+      <Button full size="lg" onClick={onClose}>Ver detalle de sesión</Button>
+    </div>
+  )
+}
+
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function ActiveSession() {
   const { state } = useLocation()
@@ -449,16 +537,7 @@ export default function ActiveSession() {
           }).catch(() => {})
         }
       }
-      navigate(`/session/${sessionId}`, {
-        replace: true,
-        state: {
-          fromWorkout: true,
-          totalTime:   stopwatch.display,
-          doneCount:   exercises.filter(e => e.status === STATUS.DONE).length,
-          totalEx:     exercises.length,
-          totalSets:   exercises.reduce((acc, e) => acc + (e.sets?.filter(s => s.done).length ?? 0), 0),
-        }
-      })
+      setView(VIEW.SUMMARY)
     } catch (e) {
       setError(e.message)
       setSaving(false)
@@ -476,7 +555,11 @@ export default function ActiveSession() {
     setComplementStates(prev => prev.map((s, idx) => idx === i ? { ...s, [field]: val } : s))
 
   // ── Cerrar y navegar al detalle de sesión ───────────────────────────────
-  const doneCount = exercises.filter(e => e.status === STATUS.DONE).length
+  const doneCount  = exercises.filter(e => e.status === STATUS.DONE).length
+  const closeSession = () => navigate(`/session/${sessionId}`, {
+    replace: true,
+    state: { fromWorkout: true }
+  })
 
   if (!hasSession) {
     navigate('/', { replace: true })
