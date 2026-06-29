@@ -671,6 +671,17 @@ export default function ActiveSession() {
         </div>
       )}
 
+      {/* ── VISTA: RESUMEN ───────────────────────────────────────── */}
+      {view === VIEW.SUMMARY && (
+        <SummaryView
+          exercises={exercises}
+          complements={complements}
+          complementStates={complementStates}
+          totalTime={stopwatch.display}
+          onClose={closeSession}
+        />
+      )}
+
       {/* ── VISTA: EJERCICIO ─────────────────────────────────────── */}
       {view === VIEW.EXERCISE && activeIdx !== null && (
         <ExerciseView
