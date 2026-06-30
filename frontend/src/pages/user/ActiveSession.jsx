@@ -437,7 +437,8 @@ export default function ActiveSession() {
 
   const hasSession = !!state?.sessionId
 
-  const stopwatch = useStopwatch(hasSession)
+  const [view,          setView]          = useState(VIEW.LIST)
+  const stopwatch = useStopwatch(hasSession && view !== VIEW.SUMMARY)
   const rest      = useRestTimer()
 
   const [sessionId]   = useState(state?.sessionId)
@@ -457,7 +458,6 @@ export default function ActiveSession() {
     (state?.complements ?? []).map(c => ({ id: c.id, done: null, observations: '' }))
   )
 
-  const [view,          setView]          = useState(VIEW.LIST)
   const [activeIdx,     setActiveIdx]     = useState(null)
   const [saving,        setSaving]        = useState(false)
   const [error,         setError]         = useState('')

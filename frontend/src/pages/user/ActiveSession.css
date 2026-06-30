@@ -242,28 +242,7 @@
   margin-top: var(--gap-sm);
 }
 
-/* ── Resumen final ───────────────────────────────────────────────── */
-.summary-trophy {
-  display: flex;
-  justify-content: center;
-  padding-top: var(--padding-page);
-}
-
-.summary-stats {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  background: var(--color-bg-card);
-  border: var(--border-card);
-  border-radius: var(--radius-card);
-  padding: var(--padding-card);
-}
-
-.summary-ex {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap-sm);
-}
+/* ── Resumen final (legacy, limpiado) ────────────────────────────── */
 
 /* ── Panel de info del ejercicio ─────────────────────────────────── */
 .ex-info-panel {
@@ -459,15 +438,19 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-  gap: var(--gap-lg);
+  gap: var(--gap-xl);
   width: 100%;
+  background: var(--color-bg-card);
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  padding: var(--padding-card) var(--gap-md);
 }
 
 .summary-stat {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
 }
 
 .summary-stat__value {
@@ -475,6 +458,7 @@
   font-size: var(--text-xl);
   font-weight: var(--weight-bold);
   color: var(--color-primary);
+  line-height: 1;
 }
 
 .summary-stat__label {
