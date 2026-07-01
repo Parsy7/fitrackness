@@ -13,8 +13,8 @@ export function Layout({ children }) {
         <NavLink to="/"          className={({ isActive }) => isActive ? 'nav-item nav-item--active' : 'nav-item'} end>
           <Home size={22} /><span>Inicio</span>
         </NavLink>
-        <NavLink to="/session"   className={({ isActive }) => isActive ? 'nav-item nav-item--active' : 'nav-item'}>
-          <Dumbbell size={22} /><span>Sesión</span>
+        <NavLink to="/sessions"  className={({ isActive }) => isActive ? 'nav-item nav-item--active' : 'nav-item'}>
+          <Dumbbell size={22} /><span>Entrenos</span>
         </NavLink>
         <NavLink to="/stats"     className={({ isActive }) => isActive ? 'nav-item nav-item--active' : 'nav-item'}>
           <BarChart2 size={22} /><span>Stats</span>

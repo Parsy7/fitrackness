@@ -1,0 +1,8 @@
+.delete-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  border-top: var(--border-card);
+  padding-top: var(--gap-sm);
+  margin-top: var(--gap-sm);
+}
